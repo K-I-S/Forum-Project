@@ -199,7 +199,7 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(45) NOT NULL,
-  `password` varchar(45) NOT NULL,
+  `password` varchar(200) NOT NULL,
   `role` varchar(10) NOT NULL DEFAULT 'User',
   `fiesrname` varchar(45) NOT NULL,
   `lastname` varchar(45) NOT NULL,
