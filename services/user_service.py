@@ -11,6 +11,10 @@ def check_if_username_exists(username: str):
     user_exists = read_query("select id, username, role from users where username = ?", (username,))
     return next((UserView.from_query_result(*row) for row in user_exists), None)
 
+def check_if_email_exists(email: str):
+    user_exists = read_query("select id, username, role from users where email = ?", (email,))
+    return next((UserView.from_query_result(*row) for row in user_exists), None)
+
 def create(user: User):
     user_pass = hash_pass(user.password)
 
@@ -33,8 +37,10 @@ def create_token(user: User) -> str:
 
 def is_authenticated(token: str) -> bool:
     user_id, username = jwt.decode(token, _SECRET, algorithms="HS256")
+
     user_data = read_query("select id, username, role from users where id = ? and username = ?",
                            (user_id, username))
+
     if next((UserView.from_query_result(*row) for row in user_data), None):
         return True
     return False
