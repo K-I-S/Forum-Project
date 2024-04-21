@@ -1,12 +1,12 @@
 from mariadb import connect
 from mariadb.connections import Connection
-from data.my_pass import _password
+
 
 
 def _get_connection() -> Connection:
     return connect(
         user='root',
-        password=_password,
+        password="master",
         host='localhost',
         port=3306,
         database='forum_app'
