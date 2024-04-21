@@ -17,37 +17,30 @@ def get_by_id(id: int):
     
     return [Message.from_query_result(*row) for row in message]
 
-#class ConvoResponse with list of msgs
-def conversation(id: int):
-    user = get_by_id(id)
-    user_messages = read_query('''SELECT m.id, m.sender_id, mu.receiver_id, m.text, m.date
+
+def conversations_by_id(id: int):
+    user_message_interactions = read_query('''SELECT m.sender_id
+                                FROM messages m
+                                where m.sender_id = ?''', (id))
+    #Ccheck whether to create a list with more comprehensive details of the users with which the authenticated user has had conversations
+    return user_message_interactions
+
+def conversation_between_ids(user_id_1:int, user_id_2:int):
+    user_messages= read_query('''SELECT m.id, m.sender_id, mu.receiver_id, m.text, m.date
                                 FROM forum_app.messages_users mu
                                 JOIN forum_app.messages m
                                 ON mu.message_id = m.id
-                                WHERE m.sender_id = ?
-                                OR mu.receiver_id = ?
-                               ''', (id, id))
+                                WHERE (m.sender_id = ? and mu.receiver_id = ?)
+                                OR ( m.sender_id = ? and mu.receiver_id = ?)
+                                ORDER BY date desc;''', (user_id_1, user_id_2, user_id_2, user_id_1))
+    return user_messages
 
-    conversations = [ViewMessage.from_query_result(*row) for row in user_messages]
+def create(message: Message):
+    # !NB - how do I add the receiver_ids to the database/where do I provide them as params
+    generated_id = insert_query(
+        'INSERT INTO messages(id,text,sender_id,date) VALUES(?,?,?,?)',
+        (message.id, message.text,message.sender_id, message.date))
+    message.id = generated_id
 
-    # user_sent_to = read_query('''SELECT mu.receiver_id
-    #                             FROM forum_app.messages_users mu
-    #                             join
-    #                             forum_app.messages m
-    #                             on 
-    #                             mu.message_id = m.id
-    #                             where m.sender_id = ?''', (id)) # 3
-    
-    # user_received_by = read_query('''SELECT m.sender_id
-    #                             FROM forum_app.messages_users mu
-    #                             join
-    #                             forum_app.messages m
-    #                             on 
-    #                             mu.message_id = m.id
-    #                             where mu.receiver_id = ?''', [row for row in user_sent_to]) #
-    
-    # if not conversation:
-    #     return None
-
-    # return [Message.from_query_result(*row) for row in message]
+    return message
 
