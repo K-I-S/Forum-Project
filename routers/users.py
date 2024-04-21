@@ -11,7 +11,9 @@ users_router = APIRouter(prefix='/users')
 @users_router.post("/register")
 def register_user(user: User):
     if user_service.check_if_username_exists(user.username):
-        return responses.BadRequest("Invalid username")
+        return responses.BadRequest("Username is taken")
+    if user_service.check_if_username_exists(user.email):
+        return responses.BadRequest("User with this email already exists")
     return user_service.create(user)
 
 
