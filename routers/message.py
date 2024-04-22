@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Response
 from services import message_services
-from data.models import Message
+from data.models import Message, ViewMessage
 from pydantic import BaseModel
 
 message_router = APIRouter(prefix='/messages')
@@ -29,7 +29,7 @@ def get_messages(user_id_1: int,user_id_2: int):
     return message_services.conversation_between_ids(user_id_1,user_id_2)
 
 @message_router.post('/')
-def create_message(message: Message):
+def create_message(message: ViewMessage):
     return message_services.create(message)
 
 

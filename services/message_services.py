@@ -22,7 +22,7 @@ def conversations_by_id(id: int):
     user_message_interactions = read_query('''SELECT m.sender_id
                                 FROM messages m
                                 where m.sender_id = ?''', (id))
-    #Ccheck whether to create a list with more comprehensive details of the users with which the authenticated user has had conversations
+    #Check whether to create a list with more comprehensive details of the users with which the authenticated user has had conversations
     return user_message_interactions
 
 def conversation_between_ids(user_id_1:int, user_id_2:int):
@@ -35,12 +35,16 @@ def conversation_between_ids(user_id_1:int, user_id_2:int):
                                 ORDER BY date desc;''', (user_id_1, user_id_2, user_id_2, user_id_1))
     return user_messages
 
-def create(message: Message):
-    # !NB - how do I add the receiver_ids to the database/where do I provide them as params
+def create(message: ViewMessage):
     generated_id = insert_query(
         'INSERT INTO messages(id,text,sender_id,date) VALUES(?,?,?,?)',
         (message.id, message.text,message.sender_id, message.date))
+    
+    populate_messages_users = insert_query(
+        'INSERT INTO messages_users(message_id,receiver_id) VALUES(?,?)',
+        (message.id, message.receiver_id))
     message.id = generated_id
-
     return message
+
+
 

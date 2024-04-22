@@ -183,9 +183,9 @@ class Message(BaseModel):
 class ViewMessage(BaseModel):
     id: int
     sender_id: int
-    receiver_id: int
     text: str 
     date: datetime
+    receiver_id: int
 
     @classmethod
     def from_query_result(cls, id, sender_id, receiver_id, text, date):
