@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `forum_app` /*!40100 DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci */;
+USE `forum_app`;
 -- MySQL dump 10.13  Distrib 8.0.18, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: forum_app
@@ -26,7 +28,8 @@ CREATE TABLE `categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
   `description` text DEFAULT NULL,
-  `locked` tinyint(4) NOT NULL DEFAULT 0,
+  `is_locked` tinyint(4) NOT NULL DEFAULT 0,
+  `is_private` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
@@ -39,6 +42,60 @@ CREATE TABLE `categories` (
 LOCK TABLES `categories` WRITE;
 /*!40000 ALTER TABLE `categories` DISABLE KEYS */;
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `categories_read`
+--
+
+DROP TABLE IF EXISTS `categories_read`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `categories_read` (
+  `categories_id` int(11) NOT NULL,
+  `users_id` int(11) NOT NULL,
+  PRIMARY KEY (`categories_id`,`users_id`),
+  KEY `fk_categories_has_users_users1_idx` (`users_id`),
+  KEY `fk_categories_has_users_categories1_idx` (`categories_id`),
+  CONSTRAINT `fk_categories_has_users_categories1` FOREIGN KEY (`categories_id`) REFERENCES `categories` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_categories_has_users_users1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `categories_read`
+--
+
+LOCK TABLES `categories_read` WRITE;
+/*!40000 ALTER TABLE `categories_read` DISABLE KEYS */;
+/*!40000 ALTER TABLE `categories_read` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `categories_write`
+--
+
+DROP TABLE IF EXISTS `categories_write`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `categories_write` (
+  `categories_id` int(11) NOT NULL,
+  `users_id` int(11) NOT NULL,
+  PRIMARY KEY (`categories_id`,`users_id`),
+  KEY `fk_categories_has_users_users2_idx` (`users_id`),
+  KEY `fk_categories_has_users_categories2_idx` (`categories_id`),
+  CONSTRAINT `fk_categories_has_users_categories2` FOREIGN KEY (`categories_id`) REFERENCES `categories` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_categories_has_users_users2` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `categories_write`
+--
+
+LOCK TABLES `categories_write` WRITE;
+/*!40000 ALTER TABLE `categories_write` DISABLE KEYS */;
+/*!40000 ALTER TABLE `categories_write` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -80,7 +137,6 @@ CREATE TABLE `messages_users` (
   `receiver_id` int(11) NOT NULL,
   PRIMARY KEY (`message_id`,`receiver_id`),
   UNIQUE KEY `messages_message_id_UNIQUE` (`message_id`),
-  UNIQUE KEY `receiver_id_UNIQUE` (`receiver_id`),
   KEY `fk_messages_has_users_users1_idx` (`receiver_id`),
   KEY `fk_messages_has_users_messages1_idx` (`message_id`),
   CONSTRAINT `fk_messages_has_users_messages1` FOREIGN KEY (`message_id`) REFERENCES `messages` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -110,6 +166,7 @@ CREATE TABLE `replies` (
   `date` datetime NOT NULL,
   `topic_id` int(11) NOT NULL,
   `best_reply` tinyint(4) NOT NULL DEFAULT 0,
+  `content` text NOT NULL,
   PRIMARY KEY (`id`,`topic_id`),
   KEY `fk_replies_users1_idx` (`user_id`),
   KEY `fk_replies_topics1_idx` (`topic_id`),
@@ -140,9 +197,9 @@ CREATE TABLE `topics` (
   `category_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `date` datetime NOT NULL,
-  `private` tinyint(4) NOT NULL DEFAULT 0,
   `description` text NOT NULL,
-  `locked` tinyint(4) NOT NULL DEFAULT 0,
+  `is_locked` tinyint(4) NOT NULL DEFAULT 0,
+  `best_reply` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`,`category_id`,`user_id`),
   KEY `fk_topics_categories1_idx` (`category_id`),
   KEY `fk_topics_users1_idx` (`user_id`),
@@ -201,13 +258,13 @@ CREATE TABLE `users` (
   `username` varchar(45) NOT NULL,
   `password` varchar(200) NOT NULL,
   `role` varchar(10) NOT NULL DEFAULT 'User',
-  `fiesrname` varchar(45) NOT NULL,
+  `firstname` varchar(45) NOT NULL,
   `lastname` varchar(45) NOT NULL,
   `email` varchar(45) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id_UNIQUE` (`id`),
   UNIQUE KEY `username_UNIQUE` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,6 +273,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (2,'Test_user','bb4bc2cabb8a78d8ed21bbe714d323bb5fb8c2fc1f5bdd6fb8a88942dbdefba5','User','Gosho','Goshev','GG@abv.bg'),(3,'Test_user2','aebcd2a750d3ac5c7d1f9479fb6796beab14897d261811bbae4bc84294596e38','User','Gosho','Goshev','G1G@abv.bg'),(5,'test_user3','aebcd2a750d3ac5c7d1f9479fb6796beab14897d261811bbae4bc84294596e38','User','Gosho','Goshev','g1g@abv.bg'),(6,'test_user4','aebcd2a750d3ac5c7d1f9479fb6796beab14897d261811bbae4bc84294596e38','User','Gosho','Goshev','g1g@abv.bg'),(7,'test_user5','aebcd2a750d3ac5c7d1f9479fb6796beab14897d261811bbae4bc84294596e38','User','Gosho','Goshev','g1g@abv.bg'),(8,'test_user6','aebcd2a750d3ac5c7d1f9479fb6796beab14897d261811bbae4bc84294596e38','User','Gosho','Goshev','g123g@abv.bg');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -232,4 +290,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-18 15:25:33
+-- Dump completed on 2024-04-23 10:36:55
