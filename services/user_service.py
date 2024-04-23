@@ -1,7 +1,9 @@
+from fastapi import HTTPException
 from data.models import User, UserView, LoginData
 from data.database import read_query, insert_query, update_query
 from hashlib import sha256
 import jwt
+
 
 _SECRET = "kisKIS123"
 def hash_pass(password):
@@ -30,23 +32,25 @@ def find_by_username_password(username: str, password: str) -> User | None:
     return next((UserView.from_query_result(*row) for row in user_data), None)
 
 def create_token(user: User) -> str:
-    payload = {user.id: user.id, user.username: user.username} #todo Double check if its made correctly
+    payload = {user.id: user.id, user.username: user.username, user.role: user.role}
 
     encoded = jwt.encode(payload, _SECRET, algorithm="HS256")
     return encoded
 
 def is_authenticated(token: str) -> bool:
-    user_id, username = jwt.decode(token, _SECRET, algorithms="HS256")
+    user_id, username, role = jwt.decode(token, _SECRET, algorithms="HS256")
 
     user_data = read_query("select id, username, role from users where id = ? and username = ?",
                            (user_id, username))
 
-    if next((UserView.from_query_result(*row) for row in user_data), None):
-        return True
-    return False
+    user = next((UserView.from_query_result(*row) for row in user_data), None)
+    if user:
+        return user
+    else:
+        raise HTTPException(status_code=401)
 
 def from_token(token: str) -> User | None:
-    user_id, username = jwt.decode(token, _SECRET, algorithms="HS256")
+    user_id, username, role = jwt.decode(token, _SECRET, algorithms="HS256")
     user = check_if_username_exists(username)
 
     return user

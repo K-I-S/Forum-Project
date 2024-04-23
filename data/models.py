@@ -3,16 +3,16 @@ from typing_extensions import Annotated
 from datetime import datetime
 
 TUsername = Annotated[
-    str, StringConstraints(to_lower=True, pattern="^\w{2,30}$")
+    str, StringConstraints(strip_whitespace=True, to_lower=True, pattern=r"^\w{2,30}$")
 ]
 TPassword = Annotated[
-    str, StringConstraints(pattern="[a-z][A-Z].{6,20}")
+    str, StringConstraints(strip_whitespace=True, pattern=r"[a-z][A-Z].{6,20}")
 ]
 Temail = Annotated[
     str,
-    StringConstraints(
+    StringConstraints(strip_whitespace=True,
         to_lower=True,
-        pattern="^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$",
+        pattern=r"^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$",
     ),
 ]
 
