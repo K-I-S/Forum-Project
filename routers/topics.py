@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Query, Body
+from fastapi import APIRouter, Query, Body, Header
 from data.models import Topic, TopicResponseModel
 from services import topic_service as ts
 from services import reply_service as rs
 from services import category_service as cs
 from datetime import datetime
-
+from common.auth import get_user_or_raise_401
+from common.responses import Forbidden
 
 topics_router = APIRouter(prefix="/topics")
 
@@ -28,7 +29,9 @@ def get_by_id(id: int):
 
 
 @topics_router.post("/", status_code=201)
-def create_topic(topic: Topic):
+def create_topic(topic: Topic, x_token: str = Header()):
+    user = get_user_or_raise_401(x_token)
+    topic.user_id = user.id
     if not cs.exists(topic.category_id):
         return f"Category {topic.category_id} does not exist!"
 
@@ -38,7 +41,13 @@ def create_topic(topic: Topic):
 
 
 @topics_router.put("/{topic_id}/bestreply")
-def choose_best_reply(topic_id: int, reply_id: int = Body(...)):
+def choose_best_reply(topic_id: int, reply_id: int = Body(...), x_token: str = Header()):
+    user = get_user_or_raise_401(x_token)
+    topic = ts.get_by_id(topic_id)
+    if user.id != topic.user_id:
+        return Forbidden("You are not the auther of this topic and can't choose the best reply!")
+
+
     if not ts.exists(topic_id):
         return "No such Topic exists!"
     if not rs.exists(reply_id):

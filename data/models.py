@@ -65,7 +65,7 @@ class LoginData(BaseModel):
 class Category(BaseModel):
     id: int | None = None
     name: Annotated[str, StringConstraints(min_length=2)]
-    description: str
+    description: str | None = None
     status: Annotated[str,StringConstraints(strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"),]
     privacy: Annotated[
         str,
@@ -92,7 +92,7 @@ class Topic(BaseModel):
     id: int | None = None
     title: Annotated[str, StringConstraints(min_length=2)]
     category_id: int
-    user_id: int
+    user_id: int | None = None
     date: datetime | None = None
     description: str
     status: (Annotated[str,StringConstraints(strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"),]| None) = None
@@ -127,7 +127,7 @@ class Topic(BaseModel):
 
 class Reply(BaseModel):
     id: int | None = None
-    user_id: int
+    user_id: int | None = None
     date: datetime | None = None
     topic_id: int
     content: str
