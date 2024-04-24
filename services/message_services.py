@@ -4,14 +4,14 @@ from datetime import datetime
 
 
 def get_all():
-    messages = read_query('SELECT id, text, sender_id, date FROM forum_app.messages')
+    messages = read_query('SELECT id, text, sender_id, date FROM messages')
 
     return [Message.from_query_result(*row) for row in messages]
 
 
 def get_by_id(id: int):
     message = read_query(
-        'SELECT id, text, sender_id, date FROM forum_app.messages WHERE sender_id = ?', (id,))
+        'SELECT id, text, sender_id, date FROM messages WHERE sender_id = ?', (id,))
     if not message:
         return None
     
@@ -20,8 +20,8 @@ def get_by_id(id: int):
 
 def conversations_by_id(id: int):
     user_message_interactions = read_query('''SELECT mu.receiver_id
-                                                FROM forum_app.messages_users as mu
-                                                JOIN forum_app.messages as m
+                                                FROM messages_users as mu
+                                                JOIN messages as m
                                                 ON mu.message_id = m.id
                                                 WHERE m.sender_id = ?
                                                 ORDER BY m.date desc;''', (id,))
@@ -29,8 +29,8 @@ def conversations_by_id(id: int):
 
 def conversation_between_ids(user_id_1:int, user_id_2:int):
     user_messages: ViewMessage= read_query('''SELECT m.id, m.sender_id, mu.receiver_id, m.text, m.date
-                                FROM forum_app.messages_users mu
-                                JOIN forum_app.messages m
+                                FROM messages_users mu
+                                JOIN messages m
                                 ON mu.message_id = m.id
                                 WHERE (m.sender_id = ? and mu.receiver_id = ?)
                                 OR (m.sender_id = ? and mu.receiver_id = ?)
@@ -51,7 +51,7 @@ def create(message: ViewMessage):
 def exists(id: int):
     return any(
         read_query(
-            "SELECT receiver_id FROM forum_app.messages_users where receiver_id = ?",
+            "SELECT receiver_id FROM messages_users where receiver_id = ?",
             (id,),
         )
     )
