@@ -72,13 +72,13 @@ class Category(BaseModel):
         StringConstraints(
             strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"
         ),
-    ]
+    ] | None = None
     privacy: Annotated[
         str,
         StringConstraints(
             strip_whitespace=True, to_lower=True, pattern=r"^(public|private)$"
         ),
-    ]
+    ] | None = None
 
     def is_locked(self):
         return self.status == "locked"
