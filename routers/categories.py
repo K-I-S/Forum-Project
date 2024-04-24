@@ -27,3 +27,10 @@ def get_category_by_id(id: int):
         return CategoryResponseModel(
             category=category, topics=ts.get_by_category(category.id)
         )
+
+
+@categories_router.post("/", status_code=201)
+def create_category(category: Category):
+    cs.create(category)
+
+    return f"Category {category.id} created successfully!"

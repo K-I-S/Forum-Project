@@ -10,7 +10,8 @@ TPassword = Annotated[
 ]
 Temail = Annotated[
     str,
-    StringConstraints(strip_whitespace=True,
+    StringConstraints(
+        strip_whitespace=True,
         to_lower=True,
         pattern=r"^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$",
     ),
@@ -66,10 +67,18 @@ class Category(BaseModel):
     id: int | None = None
     name: Annotated[str, StringConstraints(min_length=2)]
     description: str | None = None
-    status: Annotated[str,StringConstraints(strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"),]
+    status: Annotated[
+        str,
+        StringConstraints(
+            strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"
+        ),
+    ]
     privacy: Annotated[
         str,
-        StringConstraints(strip_whitespace=True, to_lower=True, pattern=r"^(public|private)$"),]
+        StringConstraints(
+            strip_whitespace=True, to_lower=True, pattern=r"^(public|private)$"
+        ),
+    ]
 
     def is_locked(self):
         return self.status == "locked"
@@ -95,7 +104,15 @@ class Topic(BaseModel):
     user_id: int | None = None
     date: datetime | None = None
     description: str
-    status: (Annotated[str,StringConstraints(strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"),]| None) = None
+    status: (
+        Annotated[
+            str,
+            StringConstraints(
+                strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"
+            ),
+        ]
+        | None
+    ) = None
     best_reply: int | str | None = None
 
     def is_locked(self):
@@ -150,26 +167,25 @@ class TopicResponseModel(BaseModel):
 
 
 class Message(BaseModel):
-    id: int 
-    text: str 
+    id: int
+    text: str
     sender_id: int
     date: datetime
 
     @classmethod
     def from_query_result(cls, id, text, sender_id, date):
-        return cls(
-            id=id, text=text, sender_id = sender_id, date=date
-            )
-    
+        return cls(id=id, text=text, sender_id=sender_id, date=date)
+
+
 class ViewMessage(BaseModel):
     id: int
     sender_id: int
-    text: str 
+    text: str
     date: datetime
     receiver_id: int
 
     @classmethod
     def from_query_result(cls, id, sender_id, receiver_id, text, date):
         return cls(
-            id=id, sender_id = sender_id, receiver_id = receiver_id, text=text, date=date
-            )
+            id=id, sender_id=sender_id, receiver_id=receiver_id, text=text, date=date
+        )

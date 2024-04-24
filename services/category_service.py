@@ -35,3 +35,14 @@ def exists(id: int):
             (id,),
         )
     )
+
+
+def create(category: Category):
+    generated_id = insert_query(
+        "insert into categories (name, description) values(?,?)",
+        (category.name, category.description),
+    )
+
+    category.id = generated_id
+
+    return category
