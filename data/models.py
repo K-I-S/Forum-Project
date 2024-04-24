@@ -3,17 +3,16 @@ from typing_extensions import Annotated
 from datetime import datetime
 
 TUsername = Annotated[
-    str, StringConstraints(strip_whitespace=True, to_lower=True, pattern="^\w{2,30}$")
+    str, StringConstraints(strip_whitespace=True, to_lower=True, pattern=r"^\w{2,30}$")
 ]
 TPassword = Annotated[
-    str, StringConstraints(strip_whitespace=True, pattern="[a-z][A-Z].{6,20}")
+    str, StringConstraints(strip_whitespace=True, pattern=r"[a-z][A-Z].{6,20}")
 ]
 Temail = Annotated[
     str,
-    StringConstraints(
-        strip_whitespace=True,
+    StringConstraints(strip_whitespace=True,
         to_lower=True,
-        pattern="^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$",
+        pattern=r"^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$",
     ),
 ]
 
@@ -21,13 +20,11 @@ Temail = Annotated[
 class User(BaseModel):
     id: int | None = None
     username: TUsername
-    password: TPassword | None = None
+    password: TPassword
     role: str = "User"
     firstname: str
     lastname: str
     email: Temail
-
-    # todo is_Admin
 
     def is_admin(self):
         return self.role == "Admin"
@@ -69,18 +66,10 @@ class Category(BaseModel):
     id: int | None = None
     name: Annotated[str, StringConstraints(min_length=2)]
     description: str
-    status: Annotated[
-        str,
-        StringConstraints(
-            strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"
-        ),
-    ]
+    status: Annotated[str,StringConstraints(strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"),]
     privacy: Annotated[
         str,
-        StringConstraints(
-            strip_whitespace=True, to_lower=True, pattern=r"^(public|private)$"
-        ),
-    ]
+        StringConstraints(strip_whitespace=True, to_lower=True, pattern=r"^(public|private)$"),]
 
     def is_locked(self):
         return self.status == "locked"
@@ -106,15 +95,7 @@ class Topic(BaseModel):
     user_id: int
     date: datetime | None = None
     description: str
-    status: (
-        Annotated[
-            str,
-            StringConstraints(
-                strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"
-            ),
-        ]
-        | None
-    ) = None
+    status: (Annotated[str,StringConstraints(strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"),]| None) = None
     best_reply: int | str | None = None
 
     def is_locked(self):
