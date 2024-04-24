@@ -20,16 +20,18 @@ def get_message_by_id(id: int):
     else:
         return message
 
-@message_router.get('users/{id}/conversations')
+@message_router.get('/{id}/conversations')
 def get_conversations(id: int):
     return message_services.conversations_by_id(id)
 
-@message_router.get('users/{id}/conversation/{id2}')
-def get_messages(user_id_1: int,user_id_2: int):
-    return message_services.conversation_between_ids(user_id_1,user_id_2)
+@message_router.get('/{id}/conversations/{id2}')
+def get_messages(id: int,id2: int):
+    return message_services.conversation_between_ids(id,id2)
 
 @message_router.post('/')
 def create_message(message: ViewMessage):
+    if not message_services.exists(message.receiver_id):
+        return "No such recipient exists!"
     return message_services.create(message)
 
 
