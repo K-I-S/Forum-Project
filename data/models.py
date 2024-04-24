@@ -127,7 +127,7 @@ class Topic(BaseModel):
 
 class Reply(BaseModel):
     id: int | None = None
-    user_id: int
+    user_id: int | None = None
     date: datetime | None = None
     topic_id: int
     content: str
