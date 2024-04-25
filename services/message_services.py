@@ -21,7 +21,7 @@ def get_by_id(id: int):
         'SELECT id, text, sender_id, date FROM messages WHERE sender_id = ?', (id,))
     if not message:
         return None
-    
+
     return [Message.from_query_result(*row) for row in message]
 
 
@@ -37,7 +37,7 @@ def conversations_by_id(id: int):
 
 
 def conversation_between_ids(user_id_1:int, user_id_2:int):
-    user_messages: ViewMessage= read_query('''SELECT m.id, m.sender_id, m.text, m.date,mu.receiver_id
+    user_messages: ViewMessage = read_query('''SELECT m.id, m.sender_id, m.text, m.date,mu.receiver_id
                                 FROM messages_users mu
                                 JOIN messages m
                                 ON mu.message_id = m.id
@@ -46,11 +46,12 @@ def conversation_between_ids(user_id_1:int, user_id_2:int):
                                 ORDER BY m.date desc;''', (user_id_1, user_id_2, user_id_2, user_id_1))
     return [ViewMessage.from_query_result(*row) for row in user_messages]
 
+
 def create(message: ViewMessage):
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     generated_id = insert_query(
         'INSERT INTO messages(id,text,sender_id,date) VALUES(?,?,?,?)',
-        (message.id, message.text,message.sender_id, current_time))
+        (message.id, message.text, message.sender_id, current_time))
 
     populate_messages_users = insert_query(
         'INSERT INTO messages_users(message_id,receiver_id) VALUES(?,?)',
@@ -65,4 +66,3 @@ def exists(id: int):
             (id,),
         )
     )
-

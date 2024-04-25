@@ -30,5 +30,3 @@ def create_message(message: ViewMessage):
     if not message_services.exists(message.receiver_id):
         return "No such recipient exists!"
     return message_services.create(message)
-
-
