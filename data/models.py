@@ -170,9 +170,11 @@ class TopicResponseModel(BaseModel):
 
 class Message(BaseModel):
     id: int 
-    text: str 
+    text: str
+    id: int | None = None
+    text: str
     sender_id: int
-    date: datetime
+    date: datetime | None = None
 
     @classmethod
     def from_query_result(cls, id, text, sender_id, date):
@@ -181,14 +183,16 @@ class Message(BaseModel):
             )
     
 class ViewMessage(BaseModel):
-    id: int
+    id: int | None = None
     sender_id: int
     text: str 
     date: datetime
+    text: str
+    date: datetime | None = None
     receiver_id: int
 
     @classmethod
-    def from_query_result(cls, id, sender_id, receiver_id, text, date):
+    def from_query_result(cls, id, sender_id, text, date,receiver_id):
         return cls(
             id=id, sender_id = sender_id, receiver_id = receiver_id, text=text, date=date
             )
