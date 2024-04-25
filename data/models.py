@@ -3,17 +3,17 @@ from typing_extensions import Annotated
 from datetime import datetime
 
 TUsername = Annotated[
-    str, StringConstraints(strip_whitespace=True, to_lower=True, pattern="^\w{2,30}$")
+    str, StringConstraints(strip_whitespace=True, to_lower=True, pattern=r"^\w{2,30}$")
 ]
 TPassword = Annotated[
-    str, StringConstraints(strip_whitespace=True, pattern="[a-z][A-Z].{6,20}")
+    str, StringConstraints(strip_whitespace=True, pattern=r"[a-z][A-Z].{6,20}")
 ]
 Temail = Annotated[
     str,
     StringConstraints(
         strip_whitespace=True,
         to_lower=True,
-        pattern="^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$",
+        pattern=r"^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$",
     ),
 ]
 
@@ -21,13 +21,11 @@ Temail = Annotated[
 class User(BaseModel):
     id: int | None = None
     username: TUsername
-    password: TPassword | None = None
+    password: TPassword
     role: str = "User"
     firstname: str
     lastname: str
     email: Temail
-
-    # todo is_Admin
 
     def is_admin(self):
         return self.role == "Admin"
@@ -68,19 +66,19 @@ class LoginData(BaseModel):
 class Category(BaseModel):
     id: int | None = None
     name: Annotated[str, StringConstraints(min_length=2)]
-    description: str
+    description: str | None = None
     status: Annotated[
         str,
         StringConstraints(
             strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"
         ),
-    ]
+    ] | None = None
     privacy: Annotated[
         str,
         StringConstraints(
             strip_whitespace=True, to_lower=True, pattern=r"^(public|private)$"
         ),
-    ]
+    ] | None = None
 
     def is_locked(self):
         return self.status == "locked"
@@ -103,7 +101,7 @@ class Topic(BaseModel):
     id: int | None = None
     title: Annotated[str, StringConstraints(min_length=2)]
     category_id: int
-    user_id: int
+    user_id: int | None = None
     date: datetime | None = None
     description: str
     status: (
@@ -146,7 +144,7 @@ class Topic(BaseModel):
 
 class Reply(BaseModel):
     id: int | None = None
-    user_id: int
+    user_id: int | None = None
     date: datetime | None = None
     topic_id: int
     content: str
@@ -180,7 +178,6 @@ class Message(BaseModel):
             id=id, text=text, sender_id=sender_id, date=date
         )
 
-
 class ViewMessage(BaseModel):
     id: int | None = None
     sender_id: int
@@ -193,4 +190,3 @@ class ViewMessage(BaseModel):
         return cls(
             id=id, sender_id=sender_id, receiver_id=receiver_id, text=text, date=date
         )
-
