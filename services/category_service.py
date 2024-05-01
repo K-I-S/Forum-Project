@@ -57,3 +57,13 @@ def change_privacy(id: int):
         category.privacy = "public"
     return category
 
+def change_accessibility(id):
+    category = get_by_id(id)
+    if not category.is_locked():
+        update_query("update categories set is_locked = 1 where id = ?", (id,))
+        category.status = "locked"
+    else:
+        update_query("update categories set is_locked = 0 where id = ?", (id,))
+        category.status = "unlocked"
+
+    return category
