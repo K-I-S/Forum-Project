@@ -69,3 +69,15 @@ def choose_best_reply(topic_id: int, reply_id: int):
     return update_query(
         "update topics set best_reply = ? where id = ?", (reply_id, topic_id)
     )
+
+
+def change_status(id:int):
+    topic = get_by_id(id)
+    if not topic.is_locked():
+        update_query("update topics set is_locked = 1 where id = ?", (id,))
+        topic.status = "locked"
+    else:
+        update_query("update topics set is_locked = 0 where id = ?", (id,))
+        topic.status = "unlocked"
+
+    return topic
