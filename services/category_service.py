@@ -1,4 +1,4 @@
-from data.database import read_query, insert_query
+from data.database import read_query, insert_query, update_query
 from data.models import Category
 
 
@@ -46,3 +46,14 @@ def create(category: Category):
     category.id = generated_id
 
     return category
+
+def change_privacy(id: int):
+    category = get_by_id(id)
+    if not category.is_private():
+        update_query("update categories set is_private = 1 where id = ?", (id,))
+        category.privacy = "private"
+    else:
+        update_query("update categories set is_private = 0 where id = ?", (id,))
+        category.privacy = "public"
+    return category
+
