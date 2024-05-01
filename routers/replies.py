@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Header
+from fastapi import APIRouter, Header, Body, Response
 
 from common.auth import get_user_or_raise_401
 from data.models import Reply
@@ -26,12 +26,21 @@ def create_reply(reply: Reply, x_token: str = Header()):
     return f"Reply {reply.id} created successfully"
 
 
-@replies_router.put("/{id}/vote/{vote_type}")  # or Body; 1
-def vote_for_reply(id: int, vote_type: str):
+@replies_router.put("/{id}/vote")
+def vote_for_reply(id: int, vote_type: str = Body(...), x_token: str = Header()):
 
-    if vote_type == "up":
-        pass
+    user = get_user_or_raise_401(x_token)
+
+    if not rs.exists(id):
+        return NotFound("This reply does not exist!")
+
+    # check for locked topic ?
+    # check for private topic ?
+
+    vote = rs.get_user_vote(user.id, id)
+    if vote is None:
+        rs.create_user_vote(user.id, vote_type, id)
+        return Response(status_code=201)
     else:
-        pass
-
-    # reply = rs.get_by_id(id)
+        rs.update_vote(id, vote_type)
+        return Response(status_code=200)

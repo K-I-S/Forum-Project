@@ -10,7 +10,10 @@ TPassword = Annotated[
     StringConstraints(
         strip_whitespace=True, pattern=r"[a-zA-Z0-9._%-].{6,20}"
     ),  # Todo make better regex
-    str, StringConstraints(strip_whitespace=True, pattern=r"[a-zA-Z0-9._%-].{6,20}")  #Todo make better regex
+    str,
+    StringConstraints(
+        strip_whitespace=True, pattern=r"[a-zA-Z0-9._%-].{6,20}"
+    ),  # Todo make better regex
 ]
 Temail = Annotated[
     str,
@@ -160,9 +163,44 @@ class Reply(BaseModel):
     content: str
 
     @classmethod
-    def from_query_result(cls, id, user_id, date, topic_id, content):
+    def from_query_result(
+        cls,
+        id,
+        user_id,
+        date,
+        topic_id,
+        content,
+    ):
         return cls(
-            id=id, user_id=user_id, date=date, topic_id=topic_id, content=content
+            id=id,
+            user_id=user_id,
+            date=date,
+            topic_id=topic_id,
+            content=content,
+        )
+
+
+class ReplyView(BaseModel):
+    id: int | None = None
+    user_id: int | None = None
+    date: datetime | None = None
+    topic_id: int
+    content: str
+    upvotes: int | None = None
+    downvotes: int | None = None
+
+    @classmethod
+    def from_query_result(
+        cls, id, user_id, date, topic_id, content, upvotes, downvotes
+    ):
+        return cls(
+            id=id,
+            user_id=user_id,
+            date=date,
+            topic_id=topic_id,
+            content=content,
+            upvotes=upvotes,
+            downvotes=downvotes,
         )
 
 
@@ -185,12 +223,6 @@ class UserVote(BaseModel):
         )
 
 
-class ReplyResponseModel(BaseModel):
-    reply: Reply
-    upvotes: int
-    downvotes: int
-
-
 class CategoryResponseModel(BaseModel):
     category: Category
     topics: list[Topic]
@@ -198,7 +230,7 @@ class CategoryResponseModel(BaseModel):
 
 class TopicResponseModel(BaseModel):
     topic: Topic
-    replies: list[ReplyResponseModel]
+    replies: list[ReplyView]
 
 
 class Message(BaseModel):
