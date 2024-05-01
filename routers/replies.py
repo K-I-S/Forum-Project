@@ -24,3 +24,14 @@ def create_reply(reply: Reply, x_token: str = Header()):
     rs.create(reply)
 
     return f"Reply {reply.id} created successfully"
+
+
+@replies_router.put("/{id}/vote/{vote_type}")  # or Body; 1
+def vote_for_reply(id: int, vote_type: str):
+
+    if vote_type == "up":
+        pass
+    else:
+        pass
+
+    # reply = rs.get_by_id(id)

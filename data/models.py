@@ -6,7 +6,10 @@ TUsername = Annotated[
     str, StringConstraints(strip_whitespace=True, to_lower=True, pattern=r"^\w{2,30}$")
 ]
 TPassword = Annotated[
-    str, StringConstraints(strip_whitespace=True, pattern=r"[a-z][A-Z].{6,20}")
+    str,
+    StringConstraints(
+        strip_whitespace=True, pattern=r"[a-zA-Z0-9._%-].{6,20}"
+    ),  # Todo make better regex
 ]
 Temail = Annotated[
     str,
@@ -67,18 +70,24 @@ class Category(BaseModel):
     id: int | None = None
     name: Annotated[str, StringConstraints(min_length=2)]
     description: str | None = None
-    status: Annotated[
-        str,
-        StringConstraints(
-            strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"
-        ),
-    ] | None = None
-    privacy: Annotated[
-        str,
-        StringConstraints(
-            strip_whitespace=True, to_lower=True, pattern=r"^(public|private)$"
-        ),
-    ] | None = None
+    status: (
+        Annotated[
+            str,
+            StringConstraints(
+                strip_whitespace=True, to_lower=True, pattern=r"^(unlocked|locked)$"
+            ),
+        ]
+        | None
+    ) = None
+    privacy: (
+        Annotated[
+            str,
+            StringConstraints(
+                strip_whitespace=True, to_lower=True, pattern=r"^(public|private)$"
+            ),
+        ]
+        | None
+    ) = None
 
     def is_locked(self):
         return self.status == "locked"
@@ -156,6 +165,31 @@ class Reply(BaseModel):
         )
 
 
+class UserVote(BaseModel):
+    id: int | None = None
+    user_id: int
+    vote_type: Annotated[
+        str,
+        StringConstraints(strip_whitespace=True, to_lower=True, pattern=r"^(up|down)$"),
+    ]
+    replies_id: int
+
+    @classmethod
+    def from_query_result(cls, id, user_id, vote_type, replies_id):
+        return cls(
+            id=id,
+            user_id=user_id,
+            vote_type="up" if vote_type else "down",
+            replies_id=replies_id,
+        )
+
+
+class ReplyResponseModel(BaseModel):
+    reply: Reply
+    upvotes: int
+    downvotes: int
+
+
 class CategoryResponseModel(BaseModel):
     category: Category
     topics: list[Topic]
@@ -163,7 +197,7 @@ class CategoryResponseModel(BaseModel):
 
 class TopicResponseModel(BaseModel):
     topic: Topic
-    replies: list[Reply]
+    replies: list[ReplyResponseModel]
 
 
 class Message(BaseModel):
@@ -174,9 +208,8 @@ class Message(BaseModel):
 
     @classmethod
     def from_query_result(cls, id, text, sender_id, date):
-        return cls(
-            id=id, text=text, sender_id=sender_id, date=date
-        )
+        return cls(id=id, text=text, sender_id=sender_id, date=date)
+
 
 class ViewMessage(BaseModel):
     id: int | None = None

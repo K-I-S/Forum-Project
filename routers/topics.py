@@ -48,7 +48,7 @@ def choose_best_reply(
     topic = ts.get_by_id(topic_id)
     if user.id != topic.user_id:
         return Forbidden(
-            "You are not the auther of this topic and can't choose the best reply!"
+            "You are not the author of this topic and can't choose the best reply!"
         )
 
     if not ts.exists(topic_id):
@@ -61,3 +61,6 @@ def choose_best_reply(
     ts.choose_best_reply(topic_id, reply_id)
 
     return f"You have successfully chosen the best reply {reply_id}!"
+
+
+# create reply here
