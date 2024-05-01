@@ -10,6 +10,7 @@ TPassword = Annotated[
     StringConstraints(
         strip_whitespace=True, pattern=r"[a-zA-Z0-9._%-].{6,20}"
     ),  # Todo make better regex
+    str, StringConstraints(strip_whitespace=True, pattern=r"[a-zA-Z0-9._%-].{6,20}")  #Todo make better regex
 ]
 Temail = Annotated[
     str,
@@ -213,7 +214,7 @@ class Message(BaseModel):
 
 class ViewMessage(BaseModel):
     id: int | None = None
-    sender_id: int
+    sender_id: int | None = None
     text: str
     date: datetime | None = None
     receiver_id: int

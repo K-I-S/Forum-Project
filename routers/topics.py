@@ -63,4 +63,14 @@ def choose_best_reply(
     return f"You have successfully chosen the best reply {reply_id}!"
 
 
-# create reply here
+@topics_router.put("/{id}/status")
+def change_status(id: int, x_token: str = Header()):
+    user = get_user_or_raise_401(x_token)
+    if not user.is_admin():
+        return Forbidden("You are not admin!")
+    if not ts.exists(id):
+        return NotFound("This topic does not exist!")
+
+    topic = ts.change_status(id)
+
+    return f"Topic {id} is {topic.status}."
