@@ -1,10 +1,11 @@
 from data.models import Message, ViewMessage
 from data.database import read_query, insert_query
 from datetime import datetime
-from data.models import User
+from pydantic import BaseModel
 
-# class ConversationUserModel(BaseModel):
-#     users: list[username]
+class ConversationUserModel(BaseModel):
+    receiver_id: int
+    username: str
 
 def get_all():
     messages = read_query('''SELECT m.id, m.sender_id, m.text, m.date, mu.receiver_id
@@ -33,7 +34,12 @@ def conversations_by_id(id: int):
                                                 JOIN users as u
                                                 ON u.id = mu.receiver_id
                                                 WHERE m.sender_id = ?;''', (id,))
-    return user_message_interactions #This will be altered to make prettier
+
+    conversation_list = [ ConversationUserModel(
+                receiver_id=receiver_id, username=username
+                )
+            for receiver_id, username in user_message_interactions]
+    return f"The User with ID {id} has conversations with the following users:", conversation_list
 
 
 def conversation_between_ids(user_id_1:int, user_id_2:int):

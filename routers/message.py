@@ -6,17 +6,17 @@ from common.auth import get_user_or_raise_401
 
 message_router = APIRouter(prefix='/messages')
 
-@message_router.get('/')
-def get_messages():
-    return message_services.get_all()
-
-@message_router.get('/{id}')
-def get_message_by_id(id: int):
-    message = message_services.get_by_id(id)
-    if message is None:
-        return Response(status_code=404) # Change to our responses, from Common folder
-    else:
-        return message
+# @message_router.get('/')
+# def get_messages():
+#     return message_services.get_all()
+#
+# @message_router.get('/{id}')
+# def get_message_by_id(id: int):
+#     message = message_services.get_by_id(id)
+#     if message is None:
+#         return Response(status_code=404) # Change to our responses, from Common folder
+#     else:
+#         return message
 
 @message_router.get('/conversations')
 def get_conversations(x_token: str = Header()):
