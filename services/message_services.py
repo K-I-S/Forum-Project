@@ -3,27 +3,10 @@ from data.database import read_query, insert_query
 from datetime import datetime
 from pydantic import BaseModel
 
+
 class ConversationUserModel(BaseModel):
     receiver_id: int
     username: str
-
-def get_all():
-    messages = read_query('''SELECT m.id, m.sender_id, m.text, m.date, mu.receiver_id
-                            FROM messages_users as mu
-                            JOIN messages as m
-                            ON mu.message_id = m.id
-                            ORDER BY m.id;''')
-
-    return [ViewMessage.from_query_result(*row) for row in messages]
-
-
-def get_by_id(id: int):
-    message = read_query(
-        'SELECT id, text, sender_id, date FROM messages WHERE sender_id = ?', (id,))
-    if not message:
-        return None
-
-    return [Message.from_query_result(*row) for row in message]
 
 
 def conversations_by_id(id: int):
@@ -35,10 +18,10 @@ def conversations_by_id(id: int):
                                                 ON u.id = mu.receiver_id
                                                 WHERE m.sender_id = ?;''', (id,))
 
-    conversation_list = [ ConversationUserModel(
-                receiver_id=receiver_id, username=username
-                )
-            for receiver_id, username in user_message_interactions]
+    conversation_list = [
+        ConversationUserModel(receiver_id=receiver_id, username=username) for receiver_id, username in user_message_interactions
+    ]
+
     return f"The User with ID {id} has conversations with the following users:", conversation_list
 
 
@@ -64,6 +47,7 @@ def create(message: ViewMessage):
         (message.id, message.receiver_id))
     message.id = generated_id
     return f'Message successfully sent!'
+
 
 def exists(id: int):
     return any(
