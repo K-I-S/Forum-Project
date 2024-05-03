@@ -3,8 +3,6 @@ from data.models import LoginData, User
 from services import user_service
 from common import responses, auth
 
-
-
 users_router = APIRouter(prefix='/users')
 
 
@@ -22,10 +20,11 @@ def login(data: LoginData):
     user = user_service.find_by_username_password(data.username, data.password)
 
     if user:
-        token = user_service.create_token(user)
+        token = auth.create_token(user)
         return {'token': token}
     else:
         return responses.BadRequest('Invalid login data')
+
 
 @users_router.get('/info')
 def user_info(x_token: str = Header()):
