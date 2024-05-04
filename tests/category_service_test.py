@@ -8,6 +8,7 @@ TEST_STATUS = "unlocked"
 TEST_PRIVACY = "public"
 TEST_DESCRIPTION = "test description"
 
+
 def create_category(category_id):
     return Category(
         id=category_id,
@@ -16,6 +17,8 @@ def create_category(category_id):
         privacy=TEST_PRIVACY
 
     )
+
+
 def create_category_view(category_id):
     return Category.from_query_result(
         id=category_id,
@@ -25,6 +28,7 @@ def create_category_view(category_id):
         is_private=TEST_PRIVACY
 
     )
+
 
 class CategoryServices_Should(unittest.TestCase):
 
@@ -69,7 +73,6 @@ class CategoryServices_Should(unittest.TestCase):
 
     def test_create_returnsCorrectCategory(self):
         with patch("services.category_service.insert_query") as create_category_func:
-
             create_category_func.return_value = 2
 
             test_category = create_category(2)
@@ -101,7 +104,6 @@ class CategoryServices_Should(unittest.TestCase):
         mock_update_query.assert_called_once_with("update categories set is_private = 0 where id = ?", (2,))
         self.assertEqual("public", result.privacy)
 
-
     @patch("services.category_service.get_by_id")
     @patch("services.category_service.update_query")
     def test_changeAccessibility_fromUnlockedToLocked(self, mock_update_query, mock_get_by_id):
@@ -122,4 +124,3 @@ class CategoryServices_Should(unittest.TestCase):
 
         mock_update_query.assert_called_once_with("update categories set is_locked = 0 where id = ?", (2,))
         self.assertEqual("unlocked", result.status)
-
