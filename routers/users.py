@@ -3,6 +3,7 @@ from data.models import LoginData, User
 from services import user_service
 from common import responses, auth
 
+
 users_router = APIRouter(prefix='/users')
 
 
