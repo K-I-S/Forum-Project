@@ -27,11 +27,11 @@ def get_by_id(id: int, x_token: str = Header()):
     
     category = cs.get_by_id(topic.category_id)
 
-    if category.is_private():
-        if cs.user_has_read_access(category.id, user.id):
-            return TopicResponseModel(topic=topic, replies=rs.get_by_topic(topic.id))
-        else: 
-            return Unauthorized("You don't have access to the category this topic belongs to!")    
+    if not category.is_private() or cs.user_has_read_access(category.id, user.id):
+        return TopicResponseModel(topic=topic, replies=rs.get_by_topic(topic.id))
+
+    else: 
+        return Unauthorized("You don't have access to the category this topic belongs to!")    
 
     
 

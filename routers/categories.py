@@ -27,13 +27,12 @@ def get_category_by_id(id: int, x_token: str = Header()):
     if category is None:
         return NotFound("This category does not exist!")
     
-    if category.is_private():
-        if cs.user_has_read_access(id, user.id):
-            return CategoryResponseModel(
-            category=category, topics=ts.get_by_category(category.id)
+    if not category.is_private() or cs.user_has_read_access(id, user.id):
+        return CategoryResponseModel(
+        category=category, topics=ts.get_by_category(category.id)
         )
-        else: 
-            return Unauthorized("You don't have access to this category!")
+    else: 
+        return Unauthorized("You don't have access to this category!")
     
 
 
