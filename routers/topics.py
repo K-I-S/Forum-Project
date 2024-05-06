@@ -5,7 +5,7 @@ from services import reply_service as rs
 from services import category_service as cs
 from datetime import datetime
 from common.auth import get_user_or_raise_401
-from common.responses import Forbidden, NotFound
+from common.responses import Forbidden, NotFound, Unauthorized
 
 topics_router = APIRouter(prefix="/topics")
 
@@ -19,13 +19,21 @@ def get_topics(
 
 
 @topics_router.get("/{id}")
-def get_by_id(id: int):
+def get_by_id(id: int, x_token: str = Header()):
+    user = get_user_or_raise_401(x_token)
     topic = ts.get_by_id(id)
-
     if topic is None:
         return NotFound("There is no such topic!")
+    
+    category = cs.get_by_id(topic.category_id)
 
-    return TopicResponseModel(topic=topic, replies=rs.get_by_topic(topic.id))
+    if category.is_private():
+        if cs.user_has_read_access(category.id, user.id):
+            return TopicResponseModel(topic=topic, replies=rs.get_by_topic(topic.id))
+        else: 
+            return Unauthorized("You don't have access to the category this topic belongs to!")    
+
+    
 
 
 @topics_router.post("/", status_code=201)
@@ -38,6 +46,21 @@ def create_topic(topic: Topic, x_token: str = Header()):
     ts.create(topic)
 
     return f"Topic {topic.id} created successfully!"
+
+@topics_router.post(
+    "/{topic_id}/replies",
+    status_code=201,
+)
+def create_reply(topic_id: int, x_token: str = Header(), content: str = Body(...)):
+    user = get_user_or_raise_401(x_token)
+
+    if not ts.exists(topic_id):
+        return NotFound("This topic does not exist!")
+
+    reply_id = rs.create(topic_id, user.id, content)
+
+    return f"Reply {reply_id} created successfully"
+
 
 
 @topics_router.put("/{topic_id}/bestreply")

@@ -1,5 +1,5 @@
 from data.database import read_query, insert_query, update_query
-from data.models import Category
+from data.models import Category, UserAccess
 
 
 def all(name: str = None, privacy: str = None, status: str = None):
@@ -67,3 +67,46 @@ def change_accessibility(id):
         category.status = "unlocked"
 
     return category
+
+def check_for_access(category_id, user_id):
+    data = read_query("select categories_id, users_id, access_type from categories_access where categories_id = ? and users_id = ?", (category_id, user_id))
+
+    return next((UserAccess.from_query_result(*row) for row in data), None)
+
+
+
+def give_user_access(category_id: int, user_id: int, access_type: str = None):
+    user_access = check_for_access(category_id, user_id)
+
+    if access_type == "write" or access_type is None:
+        access_type_value = 1
+    elif access_type == "read":
+        access_type_value = 0
+    else:
+        return f"Invalid access_type: please choose between read and write!"
+
+    if user_access is None:
+        
+            insert_query("insert into categories_access (categories_id, users_id, access_type) values (?,?,?)", (category_id, user_id, access_type_value))
+        
+            insert_query("insert into categories_access (categories_id, users_id) values (?,?)", (category_id, user_id))
+        
+
+    update_query("update categories_access set access_type = ? where categories_id = ? and users_id = ?", ( access_type_value,category_id, user_id))
+
+    return  f"User {user_id} has been granted '{"write" if access_type_value else "read"}' access!"
+
+
+
+def revoke_user_access(category_id: int, user_id):
+    user_access = check_for_access(category_id, user_id)
+
+    if user_access is None:
+        return f"The user does not have access to this category!"
+    else: 
+        update_query("delete from categories_access where categories_id = ? and users_id = ?", (category_id, user_id))
+
+    return f"The access of user with ID {user_id} has been successfully revoked"
+
+def user_has_read_access(category_id, user_id):
+    return any(read_query("select categories_id, users_id, access_type from categories_access where categories_id = ? and users_id = ?", (category_id, user_id)))

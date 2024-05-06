@@ -69,6 +69,33 @@ class LoginData(BaseModel):
     username: TUsername
     password: TPassword
 
+class UserAccess(BaseModel):
+    categories_id: int
+    users_id: int
+    access_type: (
+        Annotated[
+            str,
+            StringConstraints(
+                strip_whitespace=True, to_lower=True, pattern=r"^(read|write)$"
+            ),
+        ]
+        | None
+    ) = None
+
+    def has_read_access(self):
+        return self.access_type == "read"
+    
+    def has_write_access(self):
+        return self.access_type == "write"
+    
+    @classmethod
+    def from_query_result(cls, categories_id, users_id, access_type):
+        return cls(
+            categories_id=categories_id,
+            users_id=users_id,
+            access_type="write" if access_type else "read"
+        )
+
 
 class Category(BaseModel):
     id: int | None = None

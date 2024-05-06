@@ -41,17 +41,16 @@ def exists(id: int):
     )
 
 
-def create(reply: Reply):
+def create(topic_id: int, user_id: int, content: str):
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    generated_id = insert_query(
+    reply_id = insert_query(
         "insert into replies (user_id, date, topic_id, content) values(?,?,?,?)",
-        (reply.user_id, current_time, reply.topic_id, reply.content),
+        (user_id, current_time, topic_id, content),
     )
 
-    reply.id = generated_id
 
-    return reply
+    return reply_id
 
 
 def create_user_vote(user_id: int, vote_type: str, reply_id: int):

@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Query, Header
+from fastapi import APIRouter, Query, Header, Body
 from data.models import Category, CategoryResponseModel
 from services import category_service as cs
 from services import topic_service as ts
 from common.auth import get_user_or_raise_401
-from common.responses import Forbidden, NotFound
+from common.responses import Forbidden, NotFound, BadRequest, Unauthorized
 
 
 categories_router = APIRouter(prefix="/categories")
@@ -20,15 +20,21 @@ def get_categories(
 
 
 @categories_router.get("/{id}")
-def get_category_by_id(id: int):
+def get_category_by_id(id: int, x_token: str = Header()):
     category = cs.get_by_id(id)
+    user = get_user_or_raise_401(x_token)
 
     if category is None:
         return NotFound("This category does not exist!")
-    else:
-        return CategoryResponseModel(
+    
+    if category.is_private():
+        if cs.user_has_read_access(id, user.id):
+            return CategoryResponseModel(
             category=category, topics=ts.get_by_category(category.id)
         )
+        else: 
+            return Unauthorized("You don't have access to this category!")
+    
 
 
 @categories_router.post("/", status_code=201)
@@ -67,6 +73,41 @@ def change_accessibility_status(id: int, x_token: str = Header()):
     category = cs.change_accessibility(id)
 
     return f"Status changed to {category.status} for category {category.name}!"
+
+@categories_router.put("/{category_id}/users/{user_id}")
+def give_user_access(category_id:int, user_id:int, x_token: str = Header(), access_type: str | None = Body(...)):
+    user = get_user_or_raise_401(x_token)
+
+    if not user.is_admin():
+        return Forbidden("You are not admin!")
+    
+    category = cs.get_by_id(category_id)
+    if category is None:
+        return NotFound("This category does not exist!")
+    
+    if not category.is_private():
+        return BadRequest("The category is public! No need to give explicit access.")
+    
+    result = cs.give_user_access(category_id, user_id, access_type)
+
+    return result
+
+@categories_router.delete("/{category_id}/users/{user_id}")
+def revoke_user_access(category_id: int, user_id: int, x_token: str = Header()):
+
+    user = get_user_or_raise_401(x_token)
+
+    if not user.is_admin():
+        return Forbidden("You are not admin!")
+    
+    category = cs.get_by_id(category_id)
+    if category is None:
+        return NotFound("This category does not exist!")
+    
+    return cs.revoke_user_access(category_id, user_id)
+
+    
+
 
 
 
