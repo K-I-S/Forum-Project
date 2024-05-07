@@ -39,13 +39,13 @@ def conversation_between_ids(user_id_1:int, user_id_2:int):
 def create(message: ViewMessage):
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     generated_id = insert_query(
-        'INSERT INTO messages(id,text,sender_id,date) VALUES(?,?,?,?)',
-        (message.id, message.text, message.sender_id, current_time))
-
+        'INSERT INTO messages(text,sender_id,date) VALUES(?,?,?)',
+        (message.text, message.sender_id, current_time))
+    message.id = generated_id
     populate_messages_users = insert_query(
         'INSERT INTO messages_users(message_id,receiver_id) VALUES(?,?)',
         (message.id, message.receiver_id))
-    message.id = generated_id
+
     return f'Message successfully sent!'
 
 

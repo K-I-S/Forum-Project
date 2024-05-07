@@ -94,7 +94,8 @@ def give_user_access(category_id: int, user_id: int, access_type: str = None):
 
     update_query("update categories_access set access_type = ? where categories_id = ? and users_id = ?", ( access_type_value,category_id, user_id))
 
-    return  f"User {user_id} has been granted '{"write" if access_type_value else "read"}' access!"
+
+    return f"User {user_id} has been granted {'write' if access_type_value else 'read'} access!"
 
 
 
