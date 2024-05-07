@@ -32,7 +32,7 @@ def get_category_by_id(id: int, x_token: str = Header()):
         category=category, topics=ts.get_by_category(category.id)
         )
     else: 
-        return Unauthorized("You don't have access to this category!")
+        return Forbidden("You don't have access to this category!")
     
 
 
@@ -70,6 +70,8 @@ def change_accessibility_status(id: int, x_token: str = Header()):
         return NotFound("This category does not exist!")
 
     category = cs.change_accessibility(id)
+
+    # maybe also lock all topics in the corresponding category ? 
 
     return f"Status changed to {category.status} for category {category.name}!"
 

@@ -110,3 +110,7 @@ def revoke_user_access(category_id: int, user_id):
 
 def user_has_read_access(category_id, user_id):
     return any(read_query("select categories_id, users_id, access_type from categories_access where categories_id = ? and users_id = ?", (category_id, user_id)))
+
+
+def user_has_write_access(category_id, user_id):
+    return any(read_query("select categories_id, users_id, access_type from categories_access where categories_id = ? and users_id = ? and access_type = 1", (category_id, user_id)))

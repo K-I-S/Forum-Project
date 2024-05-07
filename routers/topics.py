@@ -35,17 +35,26 @@ def get_by_id(id: int, x_token: str = Header()):
 
     
 
-
 @topics_router.post("/", status_code=201)
 def create_topic(topic: Topic, x_token: str = Header()):
     user = get_user_or_raise_401(x_token)
     topic.user_id = user.id
-    if not cs.exists(topic.category_id):
+    category = cs.get_by_id(topic.category_id)
+
+    if category is None:
         return NotFound("This category does not exist!")
+    
+    if category.is_locked():
+        return Forbidden("The category is locked and does not accept any further topics!")
+    
+    if not category.is_private() or cs.user_has_write_access(category.id, user.id):
+        ts.create(topic)
+        return f"Topic {topic.id} created successfully!"
+    else:
+        return Forbidden("You don't have writing access for the category of this topic!")
 
-    ts.create(topic)
 
-    return f"Topic {topic.id} created successfully!"
+    
 
 @topics_router.post(
     "/{topic_id}/replies",
@@ -53,14 +62,20 @@ def create_topic(topic: Topic, x_token: str = Header()):
 )
 def create_reply(topic_id: int, x_token: str = Header(), content: str = Body(...)):
     user = get_user_or_raise_401(x_token)
+    topic = ts.get_by_id(topic_id)
+    category = cs.get_by_id(topic.category_id)
 
-    if not ts.exists(topic_id):
+    if topic is None:
         return NotFound("This topic does not exist!")
-
-    reply_id = rs.create(topic_id, user.id, content)
-
-    return f"Reply {reply_id} created successfully"
-
+    
+    if category.is_locked() or topic.is_locked():
+        return Forbidden("The topic is locked and does not accept any further replies!")
+    
+    if not category.is_private() or cs.user_has_write_access(category.id, user.id):
+        reply_id = rs.create(topic_id, user.id, content)
+        return f"Reply {reply_id} created successfully"
+    else:
+        return Forbidden("You don't have writing access for the category of this topic!")
 
 
 @topics_router.put("/{topic_id}/bestreply")

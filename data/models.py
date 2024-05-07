@@ -157,6 +157,7 @@ class Topic(BaseModel):
 
     def is_locked(self):
         return self.status == "locked"
+    
 
     @classmethod
     def from_query_result(
