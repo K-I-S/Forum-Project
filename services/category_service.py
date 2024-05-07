@@ -89,7 +89,6 @@ def give_user_access(category_id: int, user_id: int, access_type: str = None):
         
             insert_query("insert into categories_access (categories_id, users_id, access_type) values (?,?,?)", (category_id, user_id, access_type_value))
         
-            insert_query("insert into categories_access (categories_id, users_id) values (?,?)", (category_id, user_id))
         
 
     update_query("update categories_access set access_type = ? where categories_id = ? and users_id = ?", ( access_type_value,category_id, user_id))
