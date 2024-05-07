@@ -63,6 +63,20 @@ class UserView(BaseModel):
     @classmethod
     def from_query_result(cls, id, username, role):
         return cls(id=id, username=username, role=role)
+    
+class PrivilegedUserView(BaseModel):
+    id: int
+    access_type: Annotated[
+            str,
+            StringConstraints(
+                strip_whitespace=True, to_lower=True, pattern=r"^(read|write)$"
+            ),
+        ]
+    
+    @classmethod
+    def from_query_result(cls, id, access_type):
+        return cls(id=id, access_type="write" if access_type else "read")
+    
 
 
 class LoginData(BaseModel):
@@ -259,6 +273,10 @@ class CategoryResponseModel(BaseModel):
 class TopicResponseModel(BaseModel):
     topic: Topic
     replies: list[ReplyView]
+
+class CategoryPrivilegedUsers(BaseModel):
+    category: Category
+    users: list[PrivilegedUserView]
 
 
 class Message(BaseModel):

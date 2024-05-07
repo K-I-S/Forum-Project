@@ -1,5 +1,5 @@
 from data.database import read_query, insert_query, update_query
-from data.models import Category, UserAccess
+from data.models import Category, UserAccess, PrivilegedUserView
 
 
 def all(name: str = None, privacy: str = None, status: str = None):
@@ -114,3 +114,12 @@ def user_has_read_access(category_id, user_id):
 
 def user_has_write_access(category_id, user_id):
     return any(read_query("select categories_id, users_id, access_type from categories_access where categories_id = ? and users_id = ? and access_type = 1", (category_id, user_id)))
+
+def get_privileged(category_id: int):
+
+    data = read_query(
+        "select users_id, access_type from categories_access where categories_id = ?",
+        (category_id,),
+    )
+
+    return (PrivilegedUserView.from_query_result(*row) for row in data)

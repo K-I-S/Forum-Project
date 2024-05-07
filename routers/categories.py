@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query, Header, Body
-from data.models import Category, CategoryResponseModel
+from data.models import Category, CategoryResponseModel, CategoryPrivilegedUsers
 from services import category_service as cs
 from services import topic_service as ts
 from common.auth import get_user_or_raise_401
@@ -34,6 +34,20 @@ def get_category_by_id(id: int, x_token: str = Header()):
     else: 
         return Forbidden("You don't have access to this category!")
     
+@categories_router.get("/{id}/privileged")
+def get_privileged_users(id: int, x_token: str = Header()):
+    user = get_user_or_raise_401(x_token)
+    if not user.is_admin():
+        return Forbidden("You are not admin!")
+    category = cs.get_by_id(id)
+    if category is None:
+        return NotFound("There is no such category")
+    if not category.is_private():
+        return BadRequest("The category is public!")
+    else: 
+        return CategoryPrivilegedUsers(category=category, users=cs.get_privileged(category.id))
+
+
 
 
 @categories_router.post("/", status_code=201)
