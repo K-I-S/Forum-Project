@@ -1,12 +1,15 @@
 import unittest
 from unittest.mock import Mock, patch
-from data.models import Category
+from data.models import Category, UserAccess, PrivilegedUserView
 from services import category_service as service
 
 TEST_NAME = "Test Category"
 TEST_STATUS = "unlocked"
 TEST_PRIVACY = "public"
 TEST_DESCRIPTION = "test description"
+CATEGORIES_ID = 1
+USERS_ID = 2
+
 
 
 def create_category(category_id):
@@ -29,6 +32,16 @@ def create_category_view(category_id):
 
     )
 
+def fake_access():
+    return UserAccess.from_query_result(
+        categories_id = CATEGORIES_ID,
+        users_id=USERS_ID,
+        access_type="read")
+
+def fake_privileged_user(id, access_type):
+    return PrivilegedUserView.from_query_result(
+        id=id,
+        access_type=access_type)
 
 class CategoryServices_Should(unittest.TestCase):
 
@@ -124,3 +137,160 @@ class CategoryServices_Should(unittest.TestCase):
 
         mock_update_query.assert_called_once_with("update categories set is_locked = 0 where id = ?", (2,))
         self.assertEqual("unlocked", result.status)
+
+    @patch("services.category_service.read_query")
+    def test_checkForAccess_returnsCorrectUserAccess(self, mock_read_query):
+        mock_read_query.return_value = [(CATEGORIES_ID, USERS_ID, "read")]
+
+        expected = fake_access()
+
+        result = service.check_for_access(CATEGORIES_ID, USERS_ID)
+
+        mock_read_query.assert_called_once_with(
+            "select categories_id, users_id, access_type from categories_access where categories_id = ? and users_id = ?",
+            (1, 2))
+        self.assertEqual(expected, result)
+
+
+    @patch("services.category_service.read_query")
+    def test_checkForAccess_returnsNoneWhenUserNotFound(self, mock_read_query):
+        mock_read_query.return_value = []
+
+
+        result = service.check_for_access(CATEGORIES_ID, USERS_ID)
+        mock_read_query.assert_called_once_with(
+            "select categories_id, users_id, access_type from categories_access where categories_id = ? and users_id = ?",
+            (1, 2))
+        self.assertIsNone(result)
+
+    @patch("services.category_service.check_for_access")
+    @patch("services.category_service.insert_query")
+    def test_giveUserAccess_givesWriteAccessWhenNoPreviousAccess(self, mock_insert_query, mock_check_for_access):
+        mock_check_for_access.return_value = None
+
+        result = service.give_user_access(CATEGORIES_ID, USERS_ID)
+
+        mock_insert_query.assert_called_once_with(
+            "insert into categories_access (categories_id, users_id, access_type) values (?,?,?)", (1, 2, 1))
+
+        self.assertEqual("User 2 has been granted write access!", result)
+
+    @patch("services.category_service.check_for_access")
+    @patch("services.category_service.insert_query")
+    def test_giveUserAccess_givesReadAccessWhenNoPreviousAccess(self, mock_insert_query, mock_check_for_access):
+        mock_check_for_access.return_value = None
+
+        result = service.give_user_access(CATEGORIES_ID, USERS_ID, "read")
+
+
+        mock_insert_query.assert_called_once_with(
+            "insert into categories_access (categories_id, users_id, access_type) values (?,?,?)", (1, 2, 0))
+
+        self.assertEqual("User 2 has been granted read access!", result)
+
+    @patch("services.category_service.check_for_access")
+    @patch("services.category_service.insert_query")
+    @patch("services.category_service.update_query")
+    def test_giveUserAccess_givesReadAccessWhenNoPreviousAccess(self, mock_update_query, mock_insert_query, mock_check_for_access):
+        mock_check_for_access.return_value = None
+
+        result = service.give_user_access(CATEGORIES_ID, USERS_ID, "invalid")
+        mock_insert_query.assert_not_called()
+        mock_update_query.assert_not_called()
+
+        self.assertEqual("Invalid access_type: please choose between read and write!", result)
+
+
+
+    @patch("services.category_service.check_for_access")
+    @patch("services.category_service.insert_query")
+    @patch("services.category_service.update_query")
+    def test_giveUserAccess_givesReadAccessWhenNoPreviousAccess(self, mock_update_query, mock_insert_query, mock_check_for_access):
+        mock_check_for_access.return_value = 1
+
+        result = service.give_user_access(CATEGORIES_ID, USERS_ID, "read")
+        mock_update_query.assert_called_once_with(
+            "update categories_access set access_type = ? where categories_id = ? and users_id = ?", ( 0, 1, 2))
+
+        self.assertEqual("User 2 has been granted read access!", result)
+
+    @patch("services.category_service.check_for_access")
+    @patch("services.category_service.update_query")
+    def test_revokeUserAccess_revokesAccessToUser(self, mock_update_query, mock_check_for_access):
+        mock_check_for_access.return_value = 1
+
+
+        result = service.revoke_user_access(CATEGORIES_ID, USERS_ID)
+        mock_update_query.assert_called_once_with("delete from categories_access where categories_id = ? and users_id = ?", (1, 2))
+
+        self.assertEqual("The access of user with ID 2 has been successfully revoked", result)
+
+    @patch("services.category_service.check_for_access")
+    @patch("services.category_service.update_query")
+    def test_revokeUserAccess_returnsMessageWhenUserDoestHaveAccess(self, mock_update_query, mock_check_for_access):
+        mock_check_for_access.return_value = None
+
+
+        result = service.revoke_user_access(CATEGORIES_ID, USERS_ID)
+        mock_update_query.assert_not_called()
+
+        self.assertEqual("The user does not have access to this category!", result)
+
+    @patch("services.category_service.read_query")
+    def test_userHasReadAccess_returnsTrueWhenHasAccess(self, mock_read_query):
+        mock_read_query.return_value = [(CATEGORIES_ID, USERS_ID, "read")]
+
+        result = service.user_has_read_access(CATEGORIES_ID, USERS_ID)
+
+        self.assertTrue(result)
+
+    @patch("services.category_service.read_query")
+    def test_userHasReadAccess_returnsFalseWhenDoesntHaveAccess(self, mock_read_query):
+        mock_read_query.return_value = []
+
+        result = service.user_has_read_access(CATEGORIES_ID, USERS_ID)
+
+        self.assertFalse(result)
+
+    @patch("services.category_service.read_query")
+    def test_userHasWriteAccess_returnsTrueWhenHasAccess(self, mock_read_query):
+        mock_read_query.return_value = [(CATEGORIES_ID, USERS_ID, "write")]
+
+        result = service.user_has_write_access(CATEGORIES_ID, USERS_ID)
+
+        self.assertTrue(result)
+
+    @patch("services.category_service.read_query")
+    def test_userHasWriteAccess_returnsFalseWhenDoesntHaveAccess(self, mock_read_query):
+        mock_read_query.return_value = []
+
+        result = service.user_has_write_access(CATEGORIES_ID, USERS_ID)
+
+        self.assertFalse(result)
+
+    @patch("services.category_service.read_query")
+    def test_getPrivileged_returnsAllPrivilegedUsers(self, mock_read_query):
+        mock_read_query.return_value = [(1, "read"), (2, "write")]
+
+        result = service.get_privileged(2)
+        result = list(result)
+
+        expected = [fake_privileged_user(1, "read"), fake_privileged_user(2, "write")]
+
+        mock_read_query.assert_called_once_with("select users_id, access_type from categories_access where "
+                                                "categories_id = ?", (2,))
+        self.assertEqual(expected, result)
+
+    @patch("services.category_service.read_query")
+    def test_getPrivileged_returnsEmptyListWhenNoPrivilegedUsersFound(self, mock_read_query):
+        mock_read_query.return_value = []
+
+        result = service.get_privileged(2)
+        result = list(result)
+
+        expected = []
+
+        mock_read_query.assert_called_once_with("select users_id, access_type from categories_access where "
+                                                "categories_id = ?", (2,))
+        self.assertEqual(expected, result)
+
