@@ -55,19 +55,16 @@ def create_topic(topic: Topic, x_token: str = Header()):
 
 
     
-
-@topics_router.post(
-    "/{topic_id}/replies",
-    status_code=201,
-)
+@topics_router.post("/{topic_id}/replies",status_code=201)
 def create_reply(topic_id: int, x_token: str = Header(), content: str = Body(...)):
     user = get_user_or_raise_401(x_token)
     topic = ts.get_by_id(topic_id)
-    category = cs.get_by_id(topic.category_id)
 
     if topic is None:
         return NotFound("This topic does not exist!")
-    
+   
+    category = cs.get_by_id(topic.category_id)
+
     if category.is_locked() or topic.is_locked():
         return Forbidden("The topic is locked and does not accept any further replies!")
     
