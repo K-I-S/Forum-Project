@@ -5,7 +5,7 @@ from services import reply_service as rs
 from services import category_service as cs
 from datetime import datetime
 from common.auth import get_user_or_raise_401
-from common.responses import Forbidden, NotFound, Unauthorized
+from common.responses import Forbidden, NotFound, Unauthorized, BadRequest
 
 topics_router = APIRouter(prefix="/topics")
 
@@ -81,21 +81,26 @@ def choose_best_reply(
 ):
     user = get_user_or_raise_401(x_token)
     topic = ts.get_by_id(topic_id)
+    
     if user.id != topic.user_id:
         return Forbidden(
             "You are not the author of this topic and can't choose the best reply!"
         )
+    
 
     if not ts.exists(topic_id):
         return NotFound("This topic does not exist!")
-    if not rs.exists(reply_id):
+    
+    reply = rs.get_by_id(reply_id)
+    if not reply:
         return NotFound("This reply does not exist!")
+    
+    if reply.topic_id != topic_id:
+        return BadRequest("This reply is not part of this topic!")
+    else:
+        ts.choose_best_reply(topic_id, reply_id)
 
-    # check if reply.topic_id = topic_id
-
-    ts.choose_best_reply(topic_id, reply_id)
-
-    return f"You have successfully chosen the best reply {reply_id}!"
+    return f"You have successfully chosen the reply ID{reply_id} as the best!"
 
 
 @topics_router.put("/{id}/status")
