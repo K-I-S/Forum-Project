@@ -279,16 +279,6 @@ class CategoryPrivilegedUsers(BaseModel):
     users: list[PrivilegedUserView]
 
 
-class Message(BaseModel):
-    id: int | None = None
-    text: str
-    sender_id: int
-    date: datetime | None = None
-
-    @classmethod
-    def from_query_result(cls, id, text, sender_id, date):
-        return cls(id=id, text=text, sender_id=sender_id, date=date)
-
 
 class ViewMessage(BaseModel):
     id: int | None = None
@@ -302,3 +292,7 @@ class ViewMessage(BaseModel):
         return cls(
             id=id, sender_id=sender_id, receiver_id=receiver_id, text=text, date=date
         )
+
+class ConversationUserModel(BaseModel):
+    receiver_id: int
+    username: str

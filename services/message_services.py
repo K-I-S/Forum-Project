@@ -1,12 +1,7 @@
-from data.models import Message, ViewMessage
+from data.models import ViewMessage, ConversationUserModel
 from data.database import read_query, insert_query
 from datetime import datetime
-from pydantic import BaseModel
 
-
-class ConversationUserModel(BaseModel):
-    receiver_id: int
-    username: str
 
 
 def conversations_by_id(id: int):
@@ -21,19 +16,25 @@ def conversations_by_id(id: int):
     conversation_list = [
         ConversationUserModel(receiver_id=receiver_id, username=username) for receiver_id, username in user_message_interactions
     ]
-
-    return f"The User with ID {id} has conversations with the following users:", conversation_list
+    if conversation_list == []:
+        return f"There are no current conversations."
+    else: 
+        return f"User {id}(you) has conversations with the following users:", conversation_list
 
 
 def conversation_between_ids(user_id_1:int, user_id_2:int):
-    user_messages: ViewMessage = read_query('''SELECT m.id, m.sender_id, m.text, m.date,mu.receiver_id
+    user_messages: list[ViewMessage] = read_query('''SELECT m.id, m.sender_id, m.text, m.date,mu.receiver_id
                                 FROM messages_users mu
                                 JOIN messages m
                                 ON mu.message_id = m.id
                                 WHERE (m.sender_id = ? and mu.receiver_id = ?)
                                 OR (m.sender_id = ? and mu.receiver_id = ?)
                                 ORDER BY m.date desc;''', (user_id_1, user_id_2, user_id_2, user_id_1))
-    return [ViewMessage.from_query_result(*row) for row in user_messages]
+    
+    if user_messages == []:
+        return f"There are no messages to show between User {user_id_1}(you) and User {user_id_2}"
+    else: 
+        return [ViewMessage.from_query_result(*row) for row in user_messages]
 
 
 def create(message: ViewMessage):
@@ -42,11 +43,11 @@ def create(message: ViewMessage):
         'INSERT INTO messages(text,sender_id,date) VALUES(?,?,?)',
         (message.text, message.sender_id, current_time))
     message.id = generated_id
-    populate_messages_users = insert_query(
+    insert_query(
         'INSERT INTO messages_users(message_id,receiver_id) VALUES(?,?)',
         (message.id, message.receiver_id))
 
-    return f'Message successfully sent!'
+    return f'Message to User {message.receiver_id} successfully sent!'
 
 
 def exists(id: int):

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Response, Header
 from services import message_services
 from data.models import ViewMessage
 from common.auth import get_user_or_raise_401
+from common.responses import NotFound
 
 
 message_router = APIRouter(prefix='/conversations')
@@ -18,10 +19,10 @@ def get_messages(id2: int, x_token: str = Header()):
     return message_services.conversation_between_ids(user.id,id2)
 
 
-@message_router.post('/')
+@message_router.post('/', status_code=201)
 def create_message(message: ViewMessage, x_token: str = Header()):
     user = get_user_or_raise_401(x_token)
     message.sender_id = user.id
     if not message_services.exists(message.receiver_id):
-        return "No such recipient exists!"
+        return NotFound("No such recipient exists!")
     return message_services.create(message)
