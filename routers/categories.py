@@ -23,7 +23,7 @@ def get_categories(
 @categories_router.get("/{id}")
 def get_category_by_id(id: int, x_token: str = Header(None)):
     if x_token is None:
-        return Unauthorized("Token header is missing! You must be logged in to gain access")
+        return Unauthorized("Token header is missing! You must be logged in to view category.")
 
     category = cs.get_by_id(id)
     user = get_user_or_raise_401(x_token)

@@ -20,9 +20,6 @@ def vote_for_reply(id: int, vote_type: str = Body(...), x_token: str = Header())
     if not rs.exists(id):
         return NotFound("This reply does not exist!")
 
-    # check for locked topic ?
-    # check for private topic ?
-
     vote = rs.get_user_vote(user.id, id)
     if vote is None:
         rs.create_user_vote(user.id, vote_type, id)

@@ -40,7 +40,7 @@ def get_by_id(id: int, x_token: str = Header()):
 @topics_router.post("/", status_code=201)
 def create_topic(topic: Topic, x_token: str = Header(None)):
     if x_token is None:
-        return Unauthorized("Token header is missing! You must be logged in to gain access")
+        return Unauthorized("Token header is missing! You must be logged in to create a topic.")
     user = get_user_or_raise_401(x_token)
     topic.user_id = user.id
     category = cs.get_by_id(topic.category_id)
@@ -62,7 +62,7 @@ def create_topic(topic: Topic, x_token: str = Header(None)):
 @topics_router.post("/{topic_id}/replies",status_code=201)
 def create_reply(topic_id: int, x_token: str = Header(None), content: str = Body(...)):
     if x_token is None:
-        return Unauthorized("Token header is missing! You must be logged in to gain access")
+        return Unauthorized("Token header is missing! You must be logged in to post a reply")
     user = get_user_or_raise_401(x_token)
     topic = ts.get_by_id(topic_id)
 
@@ -71,7 +71,7 @@ def create_reply(topic_id: int, x_token: str = Header(None), content: str = Body
    
     category = cs.get_by_id(topic.category_id)
 
-    if category.is_locked() or topic.is_locked():
+    if topic.is_locked():
         return Forbidden("The topic is locked and does not accept any further replies!")
     
     if not category.is_private() or cs.user_has_write_access(category.id, user.id):
