@@ -14,9 +14,10 @@ def get_categories(
     name: str | None = None,
     privacy: str | None = Query(default=None, regex="^(public|private)$"),
     status: str | None = Query(default=None, regex="^(unlocked|locked)$"),
+    page: int | None = None,
+    limit: int | None = None,
 ):
-
-    return cs.all(name, privacy, status)
+    return cs.all(name, privacy, status, page, limit)
 
 
 @categories_router.get("/{id}")

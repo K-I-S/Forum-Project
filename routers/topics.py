@@ -14,8 +14,10 @@ topics_router = APIRouter(prefix="/topics")
 def get_topics(
     title: str | None = None,
     status: str | None = Query(default=None, regex="^(unlocked|locked)$"),
+    page: int | None = None,
+    limit: int | None = None,
 ):
-    return ts.all(title, status)
+    return ts.all(title, status, page, limit)
 
 
 @topics_router.get("/{id}")

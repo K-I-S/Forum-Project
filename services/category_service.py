@@ -2,7 +2,7 @@ from data.database import read_query, insert_query, update_query
 from data.models import Category, UserAccess, PrivilegedUserView
 
 
-def all(name: str = None, privacy: str = None, status: str = None):
+def all(name: str = None, privacy: str = None, status: str = None, page:int = None, limit:int = None):
     sql = "select id, name, description, is_locked, is_private from categories"
 
     where_clauses = []
@@ -16,7 +16,14 @@ def all(name: str = None, privacy: str = None, status: str = None):
     if where_clauses:
         sql += " WHERE " + " AND ".join(where_clauses)
 
-    return (Category.from_query_result(*row) for row in read_query(sql))
+    if page and limit:
+        data_list = list(Category.from_query_result(*row) for row in read_query(sql))
+        start_index = (page - 1) * limit
+        end_index = start_index + limit
+        paginated_data = data_list[start_index:end_index]
+        return paginated_data
+    else:
+        return (Category.from_query_result(*row) for row in read_query(sql))
 
 
 def get_by_id(id: int):

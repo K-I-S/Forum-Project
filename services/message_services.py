@@ -47,7 +47,7 @@ def create(message: ViewMessage):
         'INSERT INTO messages_users(message_id,receiver_id) VALUES(?,?)',
         (message.id, message.receiver_id))
 
-    return f'Message to User {message.receiver_id} successfully sent!'
+    return f'Message to User {message.receiver_id} successfully sent (ID {message.id})!'
 
 
 def exists(id: int):

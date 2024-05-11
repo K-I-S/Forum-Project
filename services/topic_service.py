@@ -3,7 +3,7 @@ from data.models import Topic
 from datetime import datetime
 
 
-def all(title: str = None, status: str = None):
+def all(title: str = None, status: str = None, page: int = None, limit: int = None):
     sql = "select id, title, category_id, user_id, date, description, is_locked, best_reply from topics"
 
     where_clauses = []
@@ -15,7 +15,14 @@ def all(title: str = None, status: str = None):
     if where_clauses:
         sql += " WHERE " + " AND ".join(where_clauses)
 
-    return (Topic.from_query_result(*row) for row in read_query(sql))
+    if page and limit:
+        data_list = list(Topic.from_query_result(*row) for row in read_query(sql))
+        start_index = (page - 1) * limit
+        end_index = start_index + limit
+        paginated_data = data_list[start_index:end_index]
+        return paginated_data
+    else:
+        return (Topic.from_query_result(*row) for row in read_query(sql))
 
 
 def get_by_id(id: int):
