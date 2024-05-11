@@ -273,3 +273,462 @@ Changes the status of a topic.
 | 401         | Token header is missing! You must be logged in to gain access |
 | 403         | You are not admin!                                        |
 | 404         | This topic does not exist!                                |
+
+
+
+## Create a Message endpoint
+
+A logged in user creates a message to another existing user in the database.
+
+### Request
+
+- **Method:** `POST`
+- **Path:** `/messages`
+
+#### Request Header
+
+- **x-token** - The token provided during login.
+
+#### Request Body
+
+- **Content Type:** `application/json`
+
+| Field        | Type   | Description                                  |
+| ------------ | ------ | -------------------------------------------- |
+| text         | string | Content of the message|
+| receiver_id  | string | Recipient of the message|
+
+#### Example Request Body
+
+```json
+{
+    "text": "Hi.",
+    "receiver_id": 5
+}
+```
+Responses
+
+- **201 Created:** Message has been sucessfully created.
+- **401 Unauthorised** - Invalid token or user is not our database.
+- **404 Not Found** Username is not found.
+- **422 Unprocessable Entity:** X-token is not provided.
+
+Response Body (Success)
+
+- **Content Type:** `text/plain`
+
+```s
+
+Message to User 5 successfully sent (ID 29)!
+
+```
+Response Body(Error)
+
+- **Content Type:** `json/application`
+```json
+{
+    "detail": "Invalid token"
+}
+```
+
+- **Content Type:** `json/application`
+```json
+{
+    "detail": [
+        {
+            "type": "missing",
+            "loc": [
+                "header",
+                "x-token"
+            ],
+            "msg": "Field required",
+            "input": null
+        }
+    ]
+}
+```
+
+- **Content Type:** `text/plain`
+```s
+
+    "No such recipient exists!"
+
+```
+
+
+
+## View Conversations endpoint
+
+Find a list of conversations a logged in user has with other users.
+
+### Request
+
+- **Method:** `GET`
+- **Path:** `/conversations`
+
+#### Request Header
+
+- **x-token:** - The token provided during login.
+
+Responses
+
+- **200 OK** - List of conversations is provided.
+- **401 Unauthorised** - Invalid token or user is not our database.
+- **422 Unprocessable Entity** X-token is not provided
+
+Response Body (Success)
+
+- **Content Type:**: `application/json`
+
+```json
+[
+    "User 4(you) has conversations with the following users:",
+    [
+        {
+            "receiver_id": 5,
+            "username": "geomilev"
+        },
+    ]
+]
+```
+Response Body(Error)
+- **Content Type:**: `application/json`
+```json
+{
+    "detail": [
+        {
+            "type": "missing",
+            "loc": [
+                "header",
+                "x-token"
+            ],
+            "msg": "Field required",
+            "input": null
+        }
+    ]
+}
+```
+- **Content Type:**: `application/json`
+```json
+{
+    "detail": "Invalid token"
+}
+```
+
+
+
+## View Conversation endpoint
+
+View the conversation between a logged in user and another registered user in the database.
+
+### Request
+
+- **Method:** `GET`
+- **Path:** `/conversation/{id}`
+
+Responses
+
+- **200 OK** The sought conversation is provided.
+- **401 Unauthorised** - Invalid token or user is not our database.
+- **422 Unprocessable Entity** X-token is not provided
+
+Response Body (Success)
+
+- **Content Type:**: `application/json`
+
+```json
+
+[
+    {
+        "id": 9,
+        "sender_id": 5,
+        "text": "Anyway. Nashledanou.",
+        "date": "2024-05-10T12:23:01",
+        "receiver_id": 4
+    },
+    {
+        "id": 8,
+        "sender_id": 4,
+        "text": "Bad day?",
+        "date": "2024-05-10T12:21:31",
+        "receiver_id": 5
+    },
+]
+```
+Response Body(Error)
+
+- **Content Type:**: `application/json`
+```json
+{
+    "detail": "Invalid token"
+}
+```
+- **Content Type:**: `application/json`
+```json
+{
+    "detail": [
+        {
+            "type": "missing",
+            "loc": [
+                "header",
+                "x-token"
+            ],
+            "msg": "Field required",
+            "input": null
+        }
+    ]
+}
+```
+
+
+## Upvote/Downvote a Reply endpoint
+
+A logged in user can upvote or downvote on an existing reply in the system.
+
+### Request
+
+- **Method:** `PUT`
+- **Path:** `/replies/{id}/vote`
+
+#### Request Header
+
+- **x-token** - The token provided during login.
+
+#### Request Body
+
+- **Content Type:** `text/plain`
+
+"up" for *upvote* or any other string for *downvote*
+
+#### Example Request Body
+
+```s
+"up"
+```
+#### Responses
+
+- **200 OK** - Vote is casted.
+- **401 Unauthorised** - Invalid token.
+- **404 Not Found** - Username is not found.
+- **422 Unprocessable Entity:** - X-token is not provided.
+
+
+#### Response Body (Success)
+
+No written response.
+
+#### Response Body(Error)
+- **Content Type:** `json/application`
+```json
+{
+    "detail": "Invalid token"
+}
+```
+- **Content Type:** `json/application`
+```json
+{
+    "detail": [
+        {
+            "type": "missing",
+            "loc": [
+                "body"
+            ],
+            "msg": "Field required",
+            "input": null
+        }
+    ]
+}
+```
+
+- **Content Type:** `json/application`
+```json
+{
+    "detail": [
+        {
+            "type": "string_type",
+            "loc": [
+                "body"
+            ],
+            "msg": "Input should be a valid string",
+            "input": 1
+        }
+    ]
+}
+```
+
+
+
+## Best Reply endpoint
+
+An author to a topic can select a reply as the best reply.
+
+### Request
+
+- **Method:** `PUT`
+- **Path:** `/topics/{id}/bestreply`
+
+#### Request Header
+
+- **x-token** - The token provided during login of the author of the topic.
+
+#### Request Body
+
+- **Content Type:** `text/plain`
+
+ID number of the reply.
+
+#### Example Request Body
+
+```s
+5
+```
+#### Responses
+
+- **200 OK** - Best Reply is selected.
+- **401 Unauthorised** - Invalid token or user is not our database.
+- **404 Not Found** - Username is not found.
+- **422 Unprocessable Entity:** - X-token is not provided.
+
+
+#### Response Body (Success)
+
+- **Content Type:** `text/plain`
+```s
+You have successfully chosen the reply ID5 as the best!
+```
+
+#### Response Body(Error)
+- **Content Type:** `json/application`
+```json
+{
+    "detail": "Invalid token"
+}
+```
+- **Content Type:** `json/application`
+```json
+{
+    "detail": [
+        {
+            "type": "missing",
+            "loc": [
+                "body"
+            ],
+            "msg": "Field required",
+            "input": null
+        }
+    ]
+}
+```
+- **Content Type:** `text/plain`
+```s
+Token header is missing! You must be logged in to gain access
+```
+
+
+
+## Categories Privacy endpoint
+
+Changing the privacy to categories between *public* and *private*.
+
+### Request
+
+- **Method:** `PUT`
+- **Path:** `/categories/{id}/privacy`
+
+#### Request Header
+
+- **x-token** - The token provided during login.
+
+
+#### Responses
+
+- **200 OK** - Category Privacy is amended.
+- **401 Unauthorised** - Invalid token or user is not our database.
+- **404 Not Found** - Username is not found.
+- **422 Unprocessable Entity:** - X-token is not provided.
+
+#### Response Body (Success)
+
+- **Content Type:** `text/plain`
+```s
+Privacy status changed to public for category Art History!
+```
+- **Content Type:** `text/plain`
+```s
+Privacy status changed to private for category Art History!
+```
+
+#### Response Body(Error)
+- **Content Type:** `json/application`
+```json
+{
+    "detail": "Invalid token"
+}
+```
+- **Content Type:** `text/plain`
+```s
+Token header is missing! You must be logged in to gain access
+```
+- **Content Type:** `text/plain`
+```s
+This category does not exist!
+```
+
+
+
+## Priviliged Users endpoint
+
+List of users who have *read* or *write* access for private categories.
+
+### Request
+
+- **Method:** `GET`
+- **Path:** `/categories/{id}/priviliged`
+
+Responses
+
+- **200 OK** List of privileged users is provided.
+- **401 Unauthorised** - Invalid token or user is not our database.
+- **422 Unprocessable Entity** X-token is not provided
+
+Response Body (Success)
+
+- **Content Type:**: `application/json`
+
+```json
+{
+    "category": {
+        "id": 2,
+        "name": "Startups",
+        "description": "Why we make one and how to succeed..",
+        "status": "unlocked",
+        "privacy": "private"
+    },
+    "users": [
+        {
+            "id": 4,
+            "access_type": "read"
+        },
+        {
+            "id": 6,
+            "access_type": "write"
+        }
+    ]
+}
+```
+Response Body(Error)
+- **Content Type:** `text/plain`
+```s
+Token header is missing! You must be logged in to gain access
+```
+- **Content Type:** `text/plain`
+```s
+You are not admin!
+```
+
+- **Content Type:**: `application/json`
+```json
+{
+    "detail": "Invalid token"
+}
+```
