@@ -20,7 +20,10 @@ def get_categories(
 
 
 @categories_router.get("/{id}")
-def get_category_by_id(id: int, x_token: str = Header()):
+def get_category_by_id(id: int, x_token: str = Header(None)):
+    if x_token is None:
+        return Unauthorized("Token header is missing! You must be logged in to gain access")
+
     category = cs.get_by_id(id)
     user = get_user_or_raise_401(x_token)
 
@@ -35,7 +38,9 @@ def get_category_by_id(id: int, x_token: str = Header()):
         return Forbidden("You don't have access to this category!")
     
 @categories_router.get("/{id}/privileged")
-def get_privileged_users(id: int, x_token: str = Header()):
+def get_privileged_users(id: int, x_token: str = Header(None)):
+    if x_token is None:
+        return Unauthorized("Token header is missing! You must be logged in to gain access")
     user = get_user_or_raise_401(x_token)
     if not user.is_admin():
         return Forbidden("You are not admin!")
@@ -51,7 +56,9 @@ def get_privileged_users(id: int, x_token: str = Header()):
 
 
 @categories_router.post("/", status_code=201)
-def create_category(category: Category, x_token: str = Header()):
+def create_category(category: Category, x_token: str = Header(None)):
+    if x_token is None:
+        return Unauthorized("Token header is missing! You must be logged in to gain access")
     user = get_user_or_raise_401(x_token)
     if not user.is_admin():
         return Forbidden("You are not admin!")
@@ -61,7 +68,9 @@ def create_category(category: Category, x_token: str = Header()):
     return f"Category {category.id} created successfully!"
 
 @categories_router.put("/{id}/privacy")
-def change_privacy_status(id: int, x_token: str = Header()):
+def change_privacy_status(id: int, x_token: str = Header(None)):
+    if x_token is None:
+        return Unauthorized("Token header is missing! You must be logged in to gain access")
     user = get_user_or_raise_401(x_token)
     if not user.is_admin():
         return Forbidden("You are not admin!")
@@ -75,7 +84,9 @@ def change_privacy_status(id: int, x_token: str = Header()):
 
 
 @categories_router.put("/{id}/status")
-def change_accessibility_status(id: int, x_token: str = Header()):
+def change_accessibility_status(id: int, x_token: str = Header(None)):
+    if x_token is None:
+        return Unauthorized("Token header is missing! You must be logged in to gain access")
     user = get_user_or_raise_401(x_token)
     if not user.is_admin():
         return Forbidden("You are not admin!")
@@ -90,7 +101,9 @@ def change_accessibility_status(id: int, x_token: str = Header()):
     return f"Status changed to {category.status} for category {category.name}!"
 
 @categories_router.put("/{category_id}/users/{user_id}")
-def give_user_access(category_id:int, user_id:int, x_token: str = Header(), access_type: str | None = Body(...)):
+def give_user_access(category_id:int, user_id:int, x_token: str = Header(None), access_type: str | None = Body(...)):
+    if x_token is None:
+        return Unauthorized("Token header is missing! You must be logged in to gain access")
     user = get_user_or_raise_401(x_token)
 
     if not user.is_admin():
@@ -108,7 +121,9 @@ def give_user_access(category_id:int, user_id:int, x_token: str = Header(), acce
     return result
 
 @categories_router.delete("/{category_id}/users/{user_id}")
-def revoke_user_access(category_id: int, user_id: int, x_token: str = Header()):
+def revoke_user_access(category_id: int, user_id: int, x_token: str = Header(None)):
+    if x_token is None:
+        return Unauthorized("Token header is missing! You must be logged in to gain access")
 
     user = get_user_or_raise_401(x_token)
 

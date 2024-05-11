@@ -36,7 +36,9 @@ def get_by_id(id: int, x_token: str = Header()):
     
 
 @topics_router.post("/", status_code=201)
-def create_topic(topic: Topic, x_token: str = Header()):
+def create_topic(topic: Topic, x_token: str = Header(None)):
+    if x_token is None:
+        return Unauthorized("Token header is missing! You must be logged in to gain access")
     user = get_user_or_raise_401(x_token)
     topic.user_id = user.id
     category = cs.get_by_id(topic.category_id)
@@ -56,7 +58,9 @@ def create_topic(topic: Topic, x_token: str = Header()):
 
     
 @topics_router.post("/{topic_id}/replies",status_code=201)
-def create_reply(topic_id: int, x_token: str = Header(), content: str = Body(...)):
+def create_reply(topic_id: int, x_token: str = Header(None), content: str = Body(...)):
+    if x_token is None:
+        return Unauthorized("Token header is missing! You must be logged in to gain access")
     user = get_user_or_raise_401(x_token)
     topic = ts.get_by_id(topic_id)
 
@@ -77,8 +81,10 @@ def create_reply(topic_id: int, x_token: str = Header(), content: str = Body(...
 
 @topics_router.put("/{topic_id}/bestreply")
 def choose_best_reply(
-    topic_id: int, reply_id: int = Body(...), x_token: str = Header()
+    topic_id: int, reply_id: int = Body(...), x_token: str = Header(None)
 ):
+    if x_token is None:
+        return Unauthorized("Token header is missing! You must be logged in to gain access")
     user = get_user_or_raise_401(x_token)
     topic = ts.get_by_id(topic_id)
     
@@ -104,7 +110,9 @@ def choose_best_reply(
 
 
 @topics_router.put("/{id}/status")
-def change_status(id: int, x_token: str = Header()):
+def change_status(id: int, x_token: str = Header(None)):
+    if x_token is None:
+        return Unauthorized("Token header is missing! You must be logged in to gain access")
     user = get_user_or_raise_401(x_token)
     if not user.is_admin():
         return Forbidden("You are not admin!")
