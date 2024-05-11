@@ -1,4 +1,4 @@
-## Register User endpoint
+## 1. Register User 
 
 Registers a new user with the system.
 
@@ -62,7 +62,7 @@ Content Type: application/json
 ```
 
 
-## User Login
+## 2. User Login
 
 Logs in a user to the system and generates an authentication token.
 
@@ -114,7 +114,7 @@ Content Type: application/json
 }
 ```
 
-## Give User Access to Category
+## 3. Give User Access to Category (Read and Write) 
 
 Grants or revokes access to a category for a specific user.
 
@@ -175,7 +175,7 @@ Response Body (Error)
 
 
 
-## Revoke User Access from Category
+## 4. Revoke User Access for Category
 
 Revokes access to a category for a specific user.
 
@@ -209,7 +209,7 @@ Revokes access to a category for a specific user.
 | 404         | This category does not exist!                             |
 
 
-## Change Accessibility Status of Category
+## 5. Lock Category
 
 Changes the accessibility status of a category.
 
@@ -242,7 +242,7 @@ Changes the accessibility status of a category.
 | 404         | This category does not exist!                             |
 
 
-## Change Accessibility Status of Topic
+## 6. Lock Topic
 
 Changes the status of a topic.
 
@@ -276,7 +276,7 @@ Changes the status of a topic.
 
 
 
-## Create a Message endpoint
+## 7. Create a Message 
 
 A logged in user creates a message to another existing user in the database.
 
@@ -345,7 +345,7 @@ Token header is missing! You need to log in first!
 
 
 
-## View Conversations endpoint
+## 8. View Conversations 
 
 Find a list of conversations a logged in user has with other users.
 
@@ -393,7 +393,7 @@ Token header is missing! You need to log in first!
 
 
 
-## View Conversation endpoint
+## 9. View Conversation
 
 View the conversation between a logged in user and another registered user in the database.
 
@@ -446,7 +446,7 @@ Token header is missing! You need to log in first!
 
 
 
-## Upvote/Downvote a Reply endpoint
+## 10. Upvote/Downvote a Reply
 
 A logged in user can upvote or downvote on an existing reply in the system.
 
@@ -527,7 +527,7 @@ Token header is missing! You need to log in first!
 
 
 
-## Best Reply endpoint
+## 11. Choose Best Reply 
 
 An author to a topic can select a reply as the best reply.
 
@@ -595,7 +595,7 @@ Token header is missing! You must be logged in to gain access
 
 
 
-## Categories Privacy endpoint
+## 12. Make Category Private/Non-Private(Public) 
 
 Changing the privacy to categories between *public* and *private*.
 
@@ -645,7 +645,7 @@ This category does not exist!
 
 
 
-## Priviliged Users endpoint
+## 13. View Priviliged Users
 
 List of users who have *read* or *write* access for private categories.
 
