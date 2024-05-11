@@ -62,6 +62,7 @@ def change_accessibility(id):
     if not category.is_locked():
         update_query("update categories set is_locked = 1 where id = ?", (id,))
         category.status = "locked"
+        update_query("update topics set is_locked = 1 where category_id = ?", (id,))
     else:
         update_query("update categories set is_locked = 0 where id = ?", (id,))
         category.status = "unlocked"
