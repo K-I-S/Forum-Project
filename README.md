@@ -331,21 +331,9 @@ Response Body(Error)
 }
 ```
 
-- **Content Type:** `json/application`
-```json
-{
-    "detail": [
-        {
-            "type": "missing",
-            "loc": [
-                "header",
-                "x-token"
-            ],
-            "msg": "Field required",
-            "input": null
-        }
-    ]
-}
+- **Content Type:** `text/plain`
+```s
+Token header is missing! You need to log in first!
 ```
 
 - **Content Type:** `text/plain`
@@ -392,21 +380,9 @@ Response Body (Success)
 ]
 ```
 Response Body(Error)
-- **Content Type:**: `application/json`
-```json
-{
-    "detail": [
-        {
-            "type": "missing",
-            "loc": [
-                "header",
-                "x-token"
-            ],
-            "msg": "Field required",
-            "input": null
-        }
-    ]
-}
+- **Content Type:** `text/plain`
+```s
+Token header is missing! You need to log in first!
 ```
 - **Content Type:**: `application/json`
 ```json
@@ -457,28 +433,17 @@ Response Body (Success)
 ```
 Response Body(Error)
 
+- **Content Type:** `text/plain`
+```s
+Token header is missing! You need to log in first!
+```
 - **Content Type:**: `application/json`
 ```json
 {
     "detail": "Invalid token"
 }
 ```
-- **Content Type:**: `application/json`
-```json
-{
-    "detail": [
-        {
-            "type": "missing",
-            "loc": [
-                "header",
-                "x-token"
-            ],
-            "msg": "Field required",
-            "input": null
-        }
-    ]
-}
-```
+
 
 
 ## Upvote/Downvote a Reply endpoint
@@ -523,6 +488,10 @@ No written response.
 {
     "detail": "Invalid token"
 }
+```
+- **Content Type:** `text/plain`
+```s
+Token header is missing! You need to log in first!
 ```
 - **Content Type:** `json/application`
 ```json
