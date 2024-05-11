@@ -76,6 +76,6 @@ def update_vote(id: int, vote_type: str):
     vote_value = 1 if vote_type == "up" else 0
 
     return update_query(
-        "update user_votes set vote_type = ? where id = ?",
+        "update user_votes set vote_type = ? where replies_id = ?",
         (vote_value, id),
     )
