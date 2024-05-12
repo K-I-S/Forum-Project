@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Topics</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Topics</h1>
+      {% for topic in topics %}
+      <div class="card">
+        <div class="card-header">Topic ID: {{ topic.id }}</div>
+        <div class="card-body">
+          <table>
+            <tr>
+              <th>Title</th>
+              <td>{{ topic.title }}</td>
+            </tr>
+            <tr>
+              <th>Category ID</th>
+              <td>{{ topic.category_id }}</td>
+            </tr>
+            <tr>
+              <th>User ID</th>
+              <td>{{ topic.user_id }}</td>
+            </tr>
+            <tr>
+              <th>Date</th>
+              <td>{{ topic.date }}</td>
+            </tr>
+            <tr>
+              <th>Description</th>
+              <td>{{ topic.description }}</td>
+            </tr>
+            <tr>
+              <th>Best Reply</th>
+              <td>{{ topic.best_reply }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>
