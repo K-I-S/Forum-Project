@@ -39,34 +39,27 @@ Registers a new user with the system.
     "email": "john@example.com"
 }
 ```
-Responses
+### Responses
 
 - **200 OK:** User successfully registered.
 - **400 Bad Request:** If the username is already taken or the email is already associated with an existing user.
 
 Response Body (Success)
 
-- **Content Type:** application/json
+- **Content Type**: `text/plain`
 
-```json
-{
-    "message": "User successfully registered"
-}
-```
-Response Body(Error)
+| Status Code | Message                                              |
+|-------------|------------------------------------------------------|
+| 200         | User with id:{id} and username:{username} was created |
 
-- **Content Type:** application/json
+Response Body (Error)
+- **Content Type**: `text/plain`
 
-```json
-{
-    "detail": "Username is taken"
-}
-```
-```json
-{
-    "detail": "User with this email already exists"
-}
-```
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 400         | Bad Request: Username is taken.                           |
+| 400         | Bad Request: User with this email already exists            |
+
 
 ## 2. User Login / Token Endpoint
 
@@ -94,7 +87,7 @@ Logs in a user to the system and generates an authentication token.
     "password": "P@ssw0rd"
 }
 ```
-Responses
+### Responses
 
 - **200 OK:** User successfully logged in and authentication token generated.
 - **400 Bad Request:** If the login data provided is invalid.
@@ -164,27 +157,17 @@ Creates a new category. Requires **admin** access/token.
 
 #### Response Body (Success)
 
-- **Content Type:** `string`
+| Status Code | Message                                              |
+|-------------|------------------------------------------------------|
+| 201         | Category 11 created successfuly!                     |
 
-```
-Status: 201 Created
+#### Response Body (Error)
 
-"Category 11 created successfuly!"
-```
-#### Response Body(Error)
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 401         | Token header is missing! You must be logged in to gain access |
+| 403         | You are not admin!                                        |
 
-- **Content Type:** `string`
-
-```
-Status: 401 Unauthorized
-
-"Token header is missing! You must be logged in to gain access."
-```
-```
-Status: 403 Forbidden
-
-"You are not admin!"
-```
 
 ## 4. Create Topic
 
@@ -227,37 +210,24 @@ Creates a new topic. Requires standard (user) authentication.
 
 #### Response Body (Success)
 
-- **Content Type:** `text/plain`
+Response Body (Success)
+- **Content Type**: `text/plain`
 
-```
-Status: 201 Created
+| Status Code | Message                                              |
+|-------------|------------------------------------------------------|
+| 201         | Topic {id} created successfuly! |
 
-"Topic 44 created successfuly!"
-```
 #### Response Body(Error)
+Response Body (Error)
+- **Content Type**: `text/plain`
 
-- **Content Type:** `text/plain`
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 401         | Token header is missing! You must be logged in to gain access |
+| 403         |The category is locked and does not  accept any further topics!                                        |
+| 403         |You don't have writing access for the category of this topic!                                        |
+| 404         | This category does not exist!                             |
 
-```
-Status: 401 Unauthorized
-
-"Token header is missing! You must be logged in to create a topic."
-```
-```
-Status: 403 Forbidden
-
-"The category is locked and does not  accept any further topics!"
-```
-```
-Status: 403 Forbidden
-
-"You don't have writing access for the category of this topic!"
-```
-```
-Status: 404 Forbidden
-
-"This category does not exist!"
-```
 
 ## 5. Create Reply
 
@@ -294,35 +264,22 @@ Just put the string with the content of the reply in the Body.
 
 - **Content Type:** `text/plain`
 
-```
-Status: 201 Created
+| Status Code | Message                                              |
+|-------------|------------------------------------------------------|
+| 201         | Reply {id} created successfuly!                      |
 
-"Reply 101 created successfuly!"
-```
 #### Response Body(Error)
 
 - **Content Type:** `text/plain`
 
-```
-Status: 401 Unauthorized
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 401         | Token header is missing! You must be logged in to gain access |
+| 403         | The topic is locked and does not  accept any further replies! |
+| 403         | You don't have writing access for the category of this topic! |
+| 404         | This topic does not exist!                             |
 
-"Token header is missing! You must be logged in to post a topic."
-```
-```
-Status: 403 Forbidden
 
-"The topic is locked and does not  accept any further replies!"
-```
-```
-Status: 403 Forbidden
-
-"You don't have writing access for the category of this topic!"
-```
-```
-Status: 404 Not Found
-
-"This topic does not exist!"
-```
 
 ## 6. View Category 
 
@@ -383,21 +340,13 @@ View a specific category and its topics. Requires standard (user) authentication
 
 - **Content Type:** `text/plain`
 
-```
-Status: 401 Unauthorized
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 401         | Token header is missing! You must be logged in to view category.|
+| 403         | You don't have access to this category!                    |
+| 404         | This category does not exist!                              |
 
-"Token header is missing! You must be logged in to view category."
-```
-```
-Status: 403 Forbidden
 
-"You don't have access to this category!"
-```
-```
-Status: 404 Not Found
-
-"This category does not exist!"
-```
 
 ## 7. View Topic 
 
@@ -470,21 +419,12 @@ View a specific topic and its replies. Requires standard (user) authentication.
 
 - **Content Type:** `text/plain`
 
-```
-Status: 401 Unauthorized
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 401         | Token header is missing! You must be logged in to view topic. |
+| 403         | You don't have access to the category this topic belongs to!  |
+| 404         | There is no such topic!                                    |
 
-"Token header is missing! You must be logged in to view topic."
-```
-```
-Status: 403 Forbidden
-
-"You don't have access to the category this topic belongs to!"
-```
-```
-Status: 404 Not Found
-
-"There is no such topic!"
-```
 
 ## 8. View Topics 
 
@@ -595,8 +535,8 @@ Grants or revokes access to a category for a specific user. Requires **admin**  
 
 ```
 
+### Responses
 
-Responses
 - **200 OK:** Access successfully granted or revoked.
 - **400 Bad Request:**  If the request body or parameters are invalid.
 - **401 Unauthorized:** If the user is not authenticated.
@@ -605,7 +545,7 @@ Responses
 
 
 Response Body (Success)
-- **Content Type**: text/plain
+- **Content Type**: `text/plain`
 
 | Status Code | Message                                              |
 |-------------|------------------------------------------------------|
@@ -756,22 +696,21 @@ A logged in user creates a message to another existing user in the database.
     "receiver_id": 5
 }
 ```
-Responses
+### Responses
 
 - **201 Created:** Message has been sucessfully created.
 - **401 Unauthorised** - Invalid token or user is not our database.
 - **404 Not Found** Username is not found.
-- **422 Unprocessable Entity:** X-token is not provided.
+
 
 Response Body (Success)
 
 - **Content Type:** `text/plain`
 
-```s
+| Status Code | Message                                              |
+|-------------|------------------------------------------------------|
+| 201         | Message to User {user_id} successfully sent (ID {message_id})!|
 
-Message to User 5 successfully sent (ID 29)!
-
-```
 Response Body(Error)
 
 - **Content Type:** `json/application`
@@ -781,15 +720,11 @@ Response Body(Error)
 }
 ```
 
-- **Content Type:** `text/plain`
-```s
-Token header is missing! You need to log in first!
-```
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 401         | Token header is missing! You need to log in first! |
+| 404         | No such recipient exists! |
 
-- **Content Type:** `text/plain`
-```s
-No such recipient exists!
-```
 
 
 
@@ -809,11 +744,11 @@ Find a list of conversations a logged in user has with other users.
 | --------- | ------ | -------------------------------------------- |
 | x-token   | string | the token of the user, generated by the login|
 
-Responses
+### Responses
 
 - **200 OK** - List of conversations is provided.
 - **401 Unauthorised** - Invalid token or user is not our database.
-- **422 Unprocessable Entity** X-token is not provided
+
 
 Response Body (Success)
 
@@ -831,16 +766,16 @@ Response Body (Success)
 ]
 ```
 Response Body(Error)
-- **Content Type:** `text/plain`
-```s
-Token header is missing! You need to log in first!
-```
 - **Content Type:**: `application/json`
 ```json
 {
     "detail": "Invalid token"
 }
 ```
+- **Content Type:** `text/plain`
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 401         | Token header is missing! You must be logged in to gain access |
 
 
 
@@ -853,16 +788,14 @@ View the conversation between a logged in user and another registered user in th
 - **Method:** `GET`
 - **Path:** `/conversation/{id}`
 
-Responses
+### Responses
 
 - **200 OK** The sought conversation is provided.
 - **401 Unauthorised** - Invalid token or user is not our database.
-- **422 Unprocessable Entity** X-token is not provided
 
 Response Body (Success)
 
 - **Content Type:**: `application/json`
-
 ```json
 [
     {
@@ -884,9 +817,11 @@ Response Body (Success)
 Response Body(Error)
 
 - **Content Type:** `text/plain`
-```s
-Token header is missing! You need to log in first!
-```
+
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 401         | Token header is missing! You must be logged in to gain access |
+
 - **Content Type:**: `application/json`
 ```json
 {
@@ -921,12 +856,11 @@ A logged in user can upvote or downvote on an existing reply in the system.
 ```s
 "up"
 ```
-#### Responses
+### Responses
 
-- **200 OK** - Vote is casted.
-- **401 Unauthorised** - Invalid token.
-- **404 Not Found** - Username is not found.
-- **422 Unprocessable Entity:** - X-token is not provided.
+- **200 OK** Vote is casted.
+- **401 Unauthorised** Invalid token.
+- **404 Not Found** Username is not found.
 
 
 #### Response Body (Success)
@@ -934,17 +868,52 @@ A logged in user can upvote or downvote on an existing reply in the system.
 No written response.
 
 #### Response Body(Error)
+- **Content Type:** `text/plain`
+
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 401         | Token header is missing! You must be logged in to gain access |
+
 - **Content Type:** `json/application`
 ```json
 {
     "detail": "Invalid token"
 }
 ```
-- **Content Type:** `text/plain`
-```s
-Token header is missing! You need to log in first!
+
+- **Content Type:** `json/application`
+```json
+{
+    "detail": [
+        {
+            "type": "missing",
+            "loc": [
+                "body"
+            ],
+            "msg": "Field required",
+            "input": null
+        }
+    ]
+}
 ```
 
+
+
+- **Content Type:** `json/application`
+```json
+{
+    "detail": [
+        {
+            "type": "string_type",
+            "loc": [
+                "body"
+            ],
+            "msg": "Input should be a valid string",
+            "input": 1
+        }
+    ]
+}
+```
 
 
 
@@ -973,20 +942,21 @@ ID number of the reply.
 ```s
 5
 ```
-#### Responses
+### Responses
 
-- **200 OK** - Best Reply is selected.
-- **401 Unauthorised** - Invalid token or user is not our database.
-- **404 Not Found** - Username is not found.
-- **422 Unprocessable Entity:** - X-token is not provided.
+- **200 OK:** Best Reply is selected.
+- **401 Unauthorised:** Invalid token or user is not our database.
+- **404 Not Found:** Username is not found.
 
 
 #### Response Body (Success)
 
 - **Content Type:** `text/plain`
-```s
-You have successfully chosen the reply ID5 as the best!
-```
+
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 200         | You have successfully chosen the reply ID {reply_id} as the best!      |
+
 
 #### Response Body(Error)
 - **Content Type:** `json/application`
@@ -1000,6 +970,9 @@ You have successfully chosen the reply ID5 as the best!
 Token header is missing! You must be logged in to gain access
 ```
 
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 401         | Token header is missing! You must be logged in to gain access |
 
 
 ## 19. Make Category Private/Non-Private(Public) 
@@ -1017,23 +990,22 @@ Changing the privacy to categories between *public* and *private*. Requires **ad
 | x-token   | string | the token of the user, generated by the login|
 
 
-#### Responses
+### Responses
 
-- **200 OK** - Category Privacy is amended.
-- **401 Unauthorised** - Invalid token or user is not our database.
-- **404 Not Found** - Username is not found.
-- **422 Unprocessable Entity:** - X-token is not provided.
+- **200 OK:** Category Privacy is amended.
+- **401 Unauthorised:** Invalid token or user is not our database.
+- **404 Not Found:** Username is not found.
 
 #### Response Body (Success)
 
 - **Content Type:** `text/plain`
-```s
-Privacy status changed to public for category Art History!
-```
-- **Content Type:** `text/plain`
-```s
-Privacy status changed to private for category Art History!
-```
+
+
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 200         | Privacy status changed to public for category Art History! |
+| 200         | Privacy status changed to private for category Art History! |
+
 
 #### Response Body(Error)
 - **Content Type:** `json/application`
@@ -1043,13 +1015,11 @@ Privacy status changed to private for category Art History!
 }
 ```
 - **Content Type:** `text/plain`
-```s
-Token header is missing! You must be logged in to gain access
-```
-- **Content Type:** `text/plain`
-```s
-This category does not exist!
-```
+
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 401         | Token header is missing! You must be logged in to gain access |
+| 404         | This category does not exist! |
 
 
 
@@ -1062,11 +1032,11 @@ List of users who have *read* or *write* access for private categories.
 - **Method:** `GET`
 - **Path:** `/categories/{id}/priviliged`
 
-Responses
+### Responses
 
-- **200 OK** List of privileged users is provided.
-- **401 Unauthorised** - Invalid token or user is not our database.
-- **422 Unprocessable Entity** X-token is not provided
+- **200 OK:** List of privileged users is provided.
+- **401 Unauthorised:** Invalid token or user is not our database.
+- **403 Forbidden:** You are not an admin to check the list of priviliged users.
 
 Response Body (Success)
 
@@ -1094,14 +1064,13 @@ Response Body (Success)
 }
 ```
 Response Body(Error)
+
 - **Content Type:** `text/plain`
-```s
-Token header is missing! You must be logged in to gain access
-```
-- **Content Type:** `text/plain`
-```s
-You are not admin!
-```
+
+| Status Code | Message                                                    |
+|-------------| ---------------------------------------------------------- |
+| 401         | Token header is missing! You must be logged in to gain access |
+| 403         | You are not admin! |
 
 - **Content Type:**: `application/json`
 ```json
