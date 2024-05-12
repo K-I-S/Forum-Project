@@ -1111,4 +1111,4 @@ You are not admin!
 ```
 ##  Database Architecture
 
-![img.png](img.png)
+![Screenshot_20240512_123927](https://github.com/K-I-S/Forum-Project/assets/155480916/a9e4dc4c-e052-41b6-a59b-46476c0d5d87)
