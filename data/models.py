@@ -1,4 +1,5 @@
 from pydantic import BaseModel, StringConstraints
+from fastapi import Form
 from typing_extensions import Annotated
 from datetime import datetime
 
@@ -49,6 +50,13 @@ class User(BaseModel):
             firstname=firstname,
             lastname=lastname,
             email=email,
+        )
+    @classmethod
+    def from_form(
+        cls, username: str = Form(...), password: str = Form(...), firstname: str = Form(...), lastname: str = Form(...), email: str = Form(...)
+    ):
+        return cls(
+            username=username, password=password,firstname=firstname, lastname=lastname, email=email
         )
 
 
