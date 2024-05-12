@@ -3,12 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Coiny&family=Sono:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
+
     <title>Register</title>
     <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}" />
   </head>
   <body>
     <div class="container">
-      <form action="/users/register" method="post">
+      <form class="register-form" action="/users/register" method="post">
         <h1>Register</h1>
         <label for="username">Username:</label><br />
         <input type="text" id="username" name="username" required /><br />
@@ -21,6 +29,14 @@
         <label for="email">Email:</label><br />
         <input type="email" id="email" name="email" required /><br /><br />
         <input type="submit" value="Register" />
+      </form>
+      <form class="register-form" action="/users/login" method="post">
+        <h1>Login</h1>
+        <label for="username">Username:</label><br />
+        <input type="text" id="username" name="username" required /><br />
+        <label for="password">Password:</label><br />
+        <input type="password" id="password" name="password" required /><br />
+        <input type="submit" value="Login" />
       </form>
     </div>
   </body>

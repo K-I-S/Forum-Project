@@ -8,16 +8,18 @@ from routers.message import message_router
 from routers.homepage import home_router
 import uvicorn
 
-app = FastAPI()
 
+
+
+app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-app = FastAPI()
 app.include_router(users_router)
 app.include_router(categories_router)
 app.include_router(topics_router)
 app.include_router(replies_router)
 app.include_router(message_router)
+app.include_router(home_router)
 
 
 if __name__ == "__main__":
