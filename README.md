@@ -96,8 +96,8 @@ Logs in a user to the system and generates an authentication token.
 ```
 Responses
 
-    200 OK: User successfully logged in and authentication token generated.
-    400 Bad Request: If the login data provided is invalid.
+- **200 OK:** User successfully logged in and authentication token generated.
+- **400 Bad Request:** If the login data provided is invalid.
 
 Response Body (Success)
 
@@ -158,9 +158,9 @@ Creates a new category. Requires **admin** access/token.
 ```
 ### Responses
 
-    201 Created: Category created successfully.
-    401 Unauthorized: If the user has failed to login.
-    403 Forbidden: If the user is not an admin. 
+- **201 Created:** Category created successfully.
+- **401 Unauthorized:** If the user has failed to login.
+- **403 Forbidden:** If the user is not an admin. 
 
 #### Response Body (Success)
 
@@ -219,10 +219,10 @@ Creates a new topic. Requires standard (user) authentication.
 ```
 ### Responses
 
-    201 Created: Topic created successfully.
-    401 Unauthorized: If the user has failed to login.
-    403 Forbidden: If the category is locked or is private and the user does not have access. 
-    404 Not Found: If the category id is not in the database.
+- **201 Created:** Topic created successfully.
+- **401 Unauthorized:** If the user has failed to login.
+- **403 Forbidden:** If the category is locked or is private and the user does not have access. 
+- **404 Not Found:** If the category id is not in the database.
     
 
 #### Response Body (Success)
@@ -284,10 +284,10 @@ Just put the string with the content of the reply in the Body.
 ```
 ### Responses
 
-    201 Created: Reply created successfully.
-    401 Unauthorized: If the user has failed to login.
-    403 Forbidden: If the topic locked or if the category it belongs to is private and the user does not have access. 
-    404 Not Found: If the topic id is not in the database.
+- **201 Created:** Reply created successfully.
+- **401 Unauthorized:** If the user has failed to login.
+- **403 Forbidden:** If the topic locked or if the category it belongs to is private and the user does not have access. 
+- **404 Not Found:** If the topic id is not in the database.
     
 
 #### Response Body (Success)
@@ -336,10 +336,10 @@ View a specific category and its topics. Requires standard (user) authentication
 
 ### Responses
 
-    200 OK: Displaying the category with its topics.
-    401 Unauthorized: If the user has failed to login.
-    403 Forbidden: If the category is private and the user does not have read or write access. 
-    404 Not Found: If the category id is not in the database.
+- **200 OK:** Displaying the category with its topics.
+- **401 Unauthorized:** If the user has failed to login.
+- **403 Forbidden:** If the category is private and the user does not have read or write access. 
+- **404 Not Found:** If the category id is not in the database.
     
 
 #### Response Body (Success) Example
@@ -411,10 +411,10 @@ View a specific topic and its replies. Requires standard (user) authentication.
 
 ### Responses
 
-    200 OK: Displaying the topic and its replies.
-    401 Unauthorized: If the user has failed to login.
-    403 Forbidden: If the category the topic belongs to is private and the user does not have read or write access. 
-    404 Not Found: If the topic id is not in the database.
+- **200 OK:** Displaying the topic and its replies.
+- **401 Unauthorized:** If the user has failed to login.
+- **403 Forbidden:** If the category the topic belongs to is private and the user does not have read or write access. 
+- **404 Not Found:** If the topic id is not in the database.
     
 
 #### Response Body (Success) Example
@@ -505,7 +505,7 @@ View all topics. Open access: no token necessary.
 
 ### Responses
 
-    200 OK: Displaying the list of topics.
+- **200 OK:** Displaying the list of topics.
 
 #### Response Body (Success) Example
 
@@ -545,7 +545,7 @@ View all categories. Open access: no token necessary.
 
 ### Responses
 
-    200 OK: Displaying the list of topics.
+- **200 OK:** Displaying the list of topics.
 
 #### Response Body (Success) Example
 
