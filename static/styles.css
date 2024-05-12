@@ -170,7 +170,7 @@ h1 {
   margin-bottom: 30px;
 }
 
-table {
+/* table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
@@ -199,121 +199,52 @@ table tbody tr:hover {
 label {
   display: block;
   margin-bottom: 5px;
-}
+} */
 
-/* Register style */
+/* VIEW CATEGORIES */
 
-/* <style>
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-form {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  width: 300px;
-}
-
-h1 {
+.categories {
   text-align: center;
-  margin-bottom: 20px;
 }
 
-label {
-  font-weight: bold;
-}
-
-input[type="text"],
-input[type="password"],
-input[type="email"] {
-  width: calc(100% - 22px);
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-input[type="submit"] {
+table {
   width: 100%;
-  background-color: #007bff;
-  border: none;
-  color: #fff;
-  padding: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
-input[type="submit"]:hover {
-  background-color: #0056b3;
-}
-</style> */
-
-/* 
-Login style */
-
-/* <style>
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
 }
 
-form {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.category-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.category-card-item {
+  border: 1px solid #ddd;
   padding: 20px;
-  width: 300px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
+.category-card-item:hover {
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
 }
 
-label {
-  font-weight: bold;
+.category-card-item h3 {
+  margin-top: 0;
 }
 
-input[type="text"],
-input[type="password"],
-input[type="email"] {
-  width: calc(100% - 22px);
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
+.category-card-item p {
+  margin-bottom: 0;
 }
-
-input[type="submit"] {
-  width: 100%;
-  background-color: #007bff;
-  border: none;
-  color: #fff;
-  padding: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-input[type="submit"]:hover {
-  background-color: #0056b3;
-}
-</style> */
