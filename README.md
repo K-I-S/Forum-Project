@@ -37,17 +37,16 @@ Responses
 
 Response Body (Success)
 
-Content Type: application/json
+- **Content Type:** application/json
 
 ```json
-
 {
     "message": "User successfully registered"
 }
 ```
 Response Body(Error)
 
-Content Type: application/json
+- **Content Type:** application/json
 
 ```json
 {
@@ -55,7 +54,6 @@ Content Type: application/json
 }
 ```
 ```json
-
 {
     "detail": "User with this email already exists"
 }
@@ -94,7 +92,7 @@ Responses
 
 Response Body (Success)
 
-Content Type: application/json
+- **Content Type**: application/json
 
 
 ```json
@@ -104,7 +102,7 @@ Content Type: application/json
 ```
 Response Body (Error)
 
-Content Type: application/json
+- **Content Type**: application/json
 
 
 ```json
@@ -157,7 +155,7 @@ Creates a new category. Requires **admin** access/token.
 
 #### Response Body (Success)
 
-Content Type: string
+- **Content Type:** `string`
 
 ```
 Status: 201 Created
@@ -166,7 +164,7 @@ Status: 201 Created
 ```
 #### Response Body(Error)
 
-Content Type: string
+- **Content Type:** `string`
 
 ```
 Status: 401 Unauthorized
@@ -220,7 +218,7 @@ Creates a new topic. Requires standard (user) authentication.
 
 #### Response Body (Success)
 
-Content Type: text/plain
+- **Content Type:** `text/plain`
 
 ```
 Status: 201 Created
@@ -229,7 +227,7 @@ Status: 201 Created
 ```
 #### Response Body(Error)
 
-Content Type: text/plain
+- **Content Type:** `text/plain`
 
 ```
 Status: 401 Unauthorized
@@ -285,7 +283,7 @@ Just put the string with the content of the reply in the Body.
 
 #### Response Body (Success)
 
-Content Type: text/plain
+- **Content Type:** `text/plain`
 
 ```
 Status: 201 Created
@@ -294,7 +292,7 @@ Status: 201 Created
 ```
 #### Response Body(Error)
 
-Content Type: text/plain
+- **Content Type:** `text/plain`
 
 ```
 Status: 401 Unauthorized
@@ -337,9 +335,9 @@ View a specific category and its topics. Requires standard (user) authentication
 
 #### Response Body (Success) Example
 
-Content Type: application/json
+- **Content Type:** `application/json`
 
-```
+```json
 Status: 200 OK
 {
     "category": {
@@ -375,7 +373,7 @@ Status: 200 OK
 ```
 #### Response Body(Error) 
 
-Content Type: text/plain
+- **Content Type:** `text/plain`
 
 ```
 Status: 401 Unauthorized
@@ -413,9 +411,9 @@ View a specific topic and its replies. Requires standard (user) authentication.
 
 #### Response Body (Success) Example
 
-Content Type: application/json
+- **Content Type:** `application/json`
 
-```
+```json
 Status: 200 OK
 {
 "topic": {
@@ -462,7 +460,7 @@ Status: 200 OK
 
 #### Response Body(Error)
 
-Content Type: text/plain
+- **Content Type:** `text/plain`
 
 ```
 Status: 401 Unauthorized
@@ -489,6 +487,13 @@ View all topics. Open access: no token necessary.
 - **Method:** `GET`
 - **Path:** `/topics`
 
+#### Request Params
+
+| Key     | Value    | Description                                  |
+| --------- | ------- | -------------------------------------------- |
+| page      | integer | The page number to display results. |
+| limit     | integer | The number of topics to display on the page. |
+
 
 ### Responses
 
@@ -496,13 +501,22 @@ View all topics. Open access: no token necessary.
 
 #### Response Body (Success) Example
 
-Content Type: application/json
+- **Content Type**: application/json
 
-```
+```json
 Status: 200 OK
-{
-  ADD EXAMPLE !!!!
-}
+[
+    {
+        "id": 1,
+        "title": "Was Van Gogh a better artist than Da Vinci?",
+        "category_id": 1,
+        "user_id": 1,
+        "date": "2024-05-09T16:23:35",
+        "description": "",
+        "status": "unlocked",
+        "best_reply": 3
+    }
+]
 ```
 
 ## 9. View Categories 
@@ -514,6 +528,13 @@ View all categories. Open access: no token necessary.
 - **Method:** `GET`
 - **Path:** `/categories`
 
+#### Request Params
+
+| Key     | Value    | Description                                  |
+| --------- | ------- | -------------------------------------------- |
+| page      | integer | The page number to display results. |
+| limit     | integer | The number of categories to display on the page. |
+
 
 ### Responses
 
@@ -521,13 +542,19 @@ View all categories. Open access: no token necessary.
 
 #### Response Body (Success) Example
 
-Content Type: application/json
+- **Content Type**:: application/json
 
-```
+```json
 Status: 200 OK
-{
-  ADD EXAMPLE !!!!
-}
+[
+    {
+        "id": 1,
+        "name": "Art History",
+        "description": "All about visual art",
+        "status": "unlocked",
+        "privacy": "public"
+    }
+]
 ```
 
 ## 10. Give User Access to Category (Read and Write) 
@@ -556,7 +583,7 @@ Grants or revokes access to a category for a specific user. Requires **admin**  
 
 #### Example Request Body
 
-```json
+```s
 
 "read"
 
@@ -572,14 +599,14 @@ Responses
 
 
 Response Body (Success)
-Content Type: text/plain
+- **Content Type**: text/plain
 
 | Status Code | Message                                              |
 |-------------|------------------------------------------------------|
 | 200         | User {user_id} has been granted {write/read} access! |
 
 Response Body (Error)
-- **Content Type:** `text/plain`
+- **Content Type**: `text/plain`
 
 | Status Code | Message                                                    |
 |-------------| ---------------------------------------------------------- |
@@ -593,7 +620,7 @@ Response Body (Error)
 
 ## 11. Revoke User Access for Category
 
-Revokes access to a category for a specific user. Requires admin token.
+Revokes access to a category for a specific user. Requires **admin** access/token.
 
 ### Request
 
@@ -627,7 +654,7 @@ Revokes access to a category for a specific user. Requires admin token.
 
 ## 12. Lock Category
 
-Changes the accessibility status of a category.
+Changes the accessibility status of a category. Requires **admin** access/token.
 
 ### Request
 
@@ -660,7 +687,7 @@ Changes the accessibility status of a category.
 
 ## 13. Lock Topic
 
-Changes the status of a topic.
+Changes the status of a topic. Requires **admin** access/token.
 
 ### Request
 
@@ -702,8 +729,9 @@ A logged in user creates a message to another existing user in the database.
 - **Path:** `/messages`
 
 #### Request Header
-
-- **x-token** - The token provided during login.
+| Key       | Value  | Description                                  |
+| --------- | ------ | -------------------------------------------- |
+| x-token   | string | the token of the user, generated by the login|
 
 #### Request Body
 
@@ -754,16 +782,14 @@ Token header is missing! You need to log in first!
 
 - **Content Type:** `text/plain`
 ```s
-
-    "No such recipient exists!"
-
+No such recipient exists!
 ```
 
 
 
 ## 15. View Conversations 
 
-Find a list of conversations a logged in user has with other users.
+Find a list of conversations a logged in user has with other users. 
 
 ### Request
 
@@ -772,7 +798,10 @@ Find a list of conversations a logged in user has with other users.
 
 #### Request Header
 
-- **x-token:** - The token provided during login.
+#### Request Header
+| Key       | Value  | Description                                  |
+| --------- | ------ | -------------------------------------------- |
+| x-token   | string | the token of the user, generated by the login|
 
 Responses
 
@@ -829,7 +858,6 @@ Response Body (Success)
 - **Content Type:**: `application/json`
 
 ```json
-
 [
     {
         "id": 9,
@@ -872,8 +900,9 @@ A logged in user can upvote or downvote on an existing reply in the system.
 - **Path:** `/replies/{id}/vote`
 
 #### Request Header
-
-- **x-token** - The token provided during login.
+| Key       | Value  | Description                                  |
+| --------- | ------ | -------------------------------------------- |
+| x-token   | string | the token of the user, generated by the login|
 
 #### Request Body
 
@@ -953,8 +982,9 @@ An author to a topic can select a reply as the best reply.
 - **Path:** `/topics/{id}/bestreply`
 
 #### Request Header
-
-- **x-token** - The token provided during login of the author of the topic.
+| Key       | Value  | Description                                  |
+| --------- | ------ | -------------------------------------------- |
+| x-token   | string | the token of the user, generated by the login|
 
 #### Request Body
 
@@ -1013,7 +1043,7 @@ Token header is missing! You must be logged in to gain access
 
 ## 19. Make Category Private/Non-Private(Public) 
 
-Changing the privacy to categories between *public* and *private*.
+Changing the privacy to categories between *public* and *private*. Requires **admin** access/token.
 
 ### Request
 
@@ -1021,8 +1051,9 @@ Changing the privacy to categories between *public* and *private*.
 - **Path:** `/categories/{id}/privacy`
 
 #### Request Header
-
-- **x-token** - The token provided during login.
+| Key       | Value  | Description                                  |
+| --------- | ------ | -------------------------------------------- |
+| x-token   | string | the token of the user, generated by the login|
 
 
 #### Responses
@@ -1078,7 +1109,7 @@ Responses
 
 Response Body (Success)
 
-- **Content Type:**: `application/json`
+- **Content Type:** `application/json`
 
 ```json
 {
