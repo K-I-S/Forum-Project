@@ -97,8 +97,6 @@ def change_accessibility_status(id: int, x_token: str = Header(None)):
 
     category = cs.change_accessibility(id)
 
-    # maybe also lock all topics in the corresponding category ? 
-
     return f"Status changed to {category.status} for category {category.name}!"
 
 @categories_router.put("/{category_id}/users/{user_id}")

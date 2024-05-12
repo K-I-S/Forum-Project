@@ -1,3 +1,12 @@
+
+# Forum Applicatin
+
+## Description:
+
+
+
+
+
 ## 1. Register User 
 
 Registers a new user with the system.
@@ -338,7 +347,6 @@ View a specific category and its topics. Requires standard (user) authentication
 - **Content Type:** `application/json`
 
 ```json
-Status: 200 OK
 {
     "category": {
         "id": 1,
@@ -414,7 +422,7 @@ View a specific topic and its replies. Requires standard (user) authentication.
 - **Content Type:** `application/json`
 
 ```json
-Status: 200 OK
+
 {
 "topic": {
         "id": 4,
@@ -504,7 +512,6 @@ View all topics. Open access: no token necessary.
 - **Content Type**: application/json
 
 ```json
-Status: 200 OK
 [
     {
         "id": 1,
@@ -545,7 +552,6 @@ View all categories. Open access: no token necessary.
 - **Content Type**:: application/json
 
 ```json
-Status: 200 OK
 [
     {
         "id": 1,
@@ -820,7 +826,7 @@ Response Body (Success)
         {
             "receiver_id": 5,
             "username": "geomilev"
-        },
+        }
     ]
 ]
 ```
@@ -872,7 +878,7 @@ Response Body (Success)
         "text": "Bad day?",
         "date": "2024-05-10T12:21:31",
         "receiver_id": 5
-    },
+    }
 ]
 ```
 Response Body(Error)
@@ -1103,3 +1109,6 @@ You are not admin!
     "detail": "Invalid token"
 }
 ```
+##  Database Architecture
+
+![img.png](img.png)
