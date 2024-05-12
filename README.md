@@ -1,8 +1,8 @@
 
-# Forum Applicatin
+# Forum Applicatinon
 
 ## Description:
-
+Our backend API empowers users to create topics, message others, and manage discussions across different categories. Administrators can oversee user activity and maintain forum security.
 
 
 
