@@ -908,7 +908,7 @@ A logged in user can upvote or downvote on an existing reply in the system.
 
 - **Content Type:** `text/plain`
 
-"up" for *upvote* or any other string for *downvote*
+"up" for *upvote* or "down" for *downvote*
 
 #### Example Request Body
 
@@ -938,37 +938,7 @@ No written response.
 ```s
 Token header is missing! You need to log in first!
 ```
-- **Content Type:** `json/application`
-```json
-{
-    "detail": [
-        {
-            "type": "missing",
-            "loc": [
-                "body"
-            ],
-            "msg": "Field required",
-            "input": null
-        }
-    ]
-}
-```
 
-- **Content Type:** `json/application`
-```json
-{
-    "detail": [
-        {
-            "type": "string_type",
-            "loc": [
-                "body"
-            ],
-            "msg": "Input should be a valid string",
-            "input": 1
-        }
-    ]
-}
-```
 
 
 
@@ -1017,21 +987,6 @@ You have successfully chosen the reply ID5 as the best!
 ```json
 {
     "detail": "Invalid token"
-}
-```
-- **Content Type:** `json/application`
-```json
-{
-    "detail": [
-        {
-            "type": "missing",
-            "loc": [
-                "body"
-            ],
-            "msg": "Field required",
-            "input": null
-        }
-    ]
 }
 ```
 - **Content Type:** `text/plain`
