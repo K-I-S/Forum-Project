@@ -9,7 +9,7 @@ from common import responses, auth
 users_router = APIRouter(prefix='/users')
 templates = Jinja2Templates(directory="templates")
 
-@users_router.get("/register", response_class=HTMLResponse)
+@users_router.get("/register_login", response_class=HTMLResponse)
 async def register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
