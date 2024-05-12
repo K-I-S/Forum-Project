@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Query, Header, Body
+from fastapi import APIRouter, Query, Header, Body, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from data.models import Category, CategoryResponseModel, CategoryPrivilegedUsers
 from services import category_service as cs
 from services import topic_service as ts
@@ -7,17 +9,19 @@ from common.responses import Forbidden, NotFound, BadRequest, Unauthorized
 
 
 categories_router = APIRouter(prefix="/categories")
+templates = Jinja2Templates(directory="templates")
 
-
-@categories_router.get("/")
-def get_categories(
+@categories_router.get("/", response_class=HTMLResponse)
+async def get_categories(
+    request: Request,
     name: str | None = None,
     privacy: str | None = Query(default=None, regex="^(public|private)$"),
     status: str | None = Query(default=None, regex="^(unlocked|locked)$"),
-    page: int | None = None,
-    limit: int | None = None,
 ):
-    return cs.all(name, privacy, status, page, limit)
+
+    categories = cs.all(name, privacy, status)
+
+    return templates.TemplateResponse("categories.html", {"request": request, "categories": categories})
 
 
 @categories_router.get("/{id}")

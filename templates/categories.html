@@ -3,34 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Coiny&family=Sono:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
+
     <title>Categories</title>
     <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}" />
   </head>
-  <body>
-    <h1 class="categories">Categories</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Status</th>
-          <th>Privacy</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for category in categories %}
-        <tr>
-          <td>{{ category.id }}</td>
-          <td>{{ category.name }}</td>
-          <td>{{ category.description }}</td>
-          <td>{{ category.status }}</td>
-          <td>{{ category.privacy }}</td>
-          <td onclick="redirectToCategory('{{category.id}}')">View Category</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <body class="categories-body">
+    <h1 class="categories-heading">Categories</h1>
+
+    <ul class="category-grid">
+      {% for category in categories %}
+      <li class="category-card" onclick="redirectToCategory('{{category.id}}')">
+        <h3>{{ category.name }}</h3>
+        <div class="category-card-body">
+          <p>{{ category.description }}</p>
+          <div class="statuses">
+            <p>{{ category.status }}</p>
+            <p>{{ category.privacy }}</p>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
 
     <script>
       // Function to redirect to the category endpoint
