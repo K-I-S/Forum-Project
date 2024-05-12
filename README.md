@@ -62,7 +62,7 @@ Content Type: application/json
 ```
 
 
-## 2. User Login
+## 2. User Login / Token Endpoint
 
 Logs in a user to the system and generates an authentication token.
 
