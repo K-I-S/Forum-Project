@@ -51,7 +51,7 @@ class ConversationServiceTests(unittest.TestCase):
         mock_insert_query.side_effect = [1, 2]  
         message = ViewMessage(sender_id=1, text=TEST_CONTENT, receiver_id=2)
         result = service.create(message)
-        expected = "Message to User 2 successfully sent!"
+        expected = "Message to User 2 successfully sent (ID 1)!"
         self.assertEqual(expected, result)
 
     @patch("services.message_services.read_query")
