@@ -124,7 +124,7 @@ class CategoryServices_Should(unittest.TestCase):
         mock_get_by_id.return_value = test_category
         result = service.change_accessibility(2)
 
-        mock_update_query.assert_called_once_with("update categories set is_locked = 1 where id = ?", (2,))
+        mock_update_query.assert_called_with("update topics set is_locked = 1 where category_id = ?", (2,))
         self.assertEqual("locked", result.status)
 
     @patch("services.category_service.get_by_id")
@@ -135,7 +135,7 @@ class CategoryServices_Should(unittest.TestCase):
         mock_get_by_id.return_value = test_category
         result = service.change_accessibility(2)
 
-        mock_update_query.assert_called_once_with("update categories set is_locked = 0 where id = ?", (2,))
+        mock_update_query.assert_called_with("update categories set is_locked = 0 where id = ?", (2,))
         self.assertEqual("unlocked", result.status)
 
     @patch("services.category_service.read_query")

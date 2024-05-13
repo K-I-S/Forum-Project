@@ -173,12 +173,9 @@ class ReplyService_Should(unittest.TestCase):
     def test_updateVote_CallsCorrectQueryWhenVoteIsUP(self, mock_update_query):
         service.update_vote(1, "up")
         mock_update_query.assert_called_once_with(
-        "update user_votes set vote_type = ? where id = ?",
-        (1, 1),)
+        "update user_votes set vote_type = ? where replies_id = ?", (1, 1),)
 
     @patch("services.reply_service.update_query")
     def test_updateVote_CallsCorrectQueryWhenVoteIsDown(self, mock_update_query):
         service.update_vote(1, "down")
-        mock_update_query.assert_called_once_with(
-        "update user_votes set vote_type = ? where id = ?",
-        (0, 1),)
+        mock_update_query.assert_called_once_with("update user_votes set vote_type = ? where replies_id = ?", (0, 1),)
